@@ -71,7 +71,7 @@ async function  verifyToken  (req, res, next)
                     req.body.accessToken = accessToken
                     next()
                 }
-                else if(req.method == 'GET' && (req.baseUrl.includes('get') ||req.baseUrl ==  '/authenticate/logout'))
+                else if(req.method == 'GET' && (req.baseUrl.includes('get') ||req.baseUrl ==  '/auth/logout'))
                 {
                     req.body.accessToken = accessToken
                     next()
