@@ -23,7 +23,7 @@ class tdsMaster {
         this.glAccount      =   {
                                     "uuid" : data.glAccUuid,
                                     "ledgerDescription" : data.ledger_description,
-                                    "accountNumber":account_number
+                                    "accountNumber": data.account_number
                                 }
         this.gstMaster      =   {
                                     "uuid" : data.gstUuid,

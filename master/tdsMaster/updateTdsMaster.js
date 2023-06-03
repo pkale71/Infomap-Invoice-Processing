@@ -20,7 +20,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 {
     try
     {
-        if(!req.body.description || !req.body.uuid || !req.body.taxSection || !req.body.gstMaster || !req.body.gstMaster?.uuid || !req.body.rate || !req.body.glAccount || !req.body.glAccount?.uuid)
+        if(!req.body.description || !req.body.uuid || !req.body.taxSection || !req.body.gstMaster || !req.body.gstMaster?.uuid || !parseFloat(req.body.rate) || !req.body.glAccount || !req.body.glAccount?.uuid)
         {
             res.status(400)
             return res.json({

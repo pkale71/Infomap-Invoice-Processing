@@ -53,7 +53,7 @@ db.getTdsMasters = () =>
     {
         try
         {
-            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, convert_tz(tm.created_on,'+00:00','+05:30') AS created_on, created_by_id,
+            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, convert_tz(tm.created_on,'+00:00','+05:30') AS created_on, tm.created_by_id,
             convert_tz(tm.modify_on,'+00:00','+05:30') AS modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
             gm.uuid AS gstUuid, gm.tax_code, gm.description AS gstDescription
                        FROM tds_master tm
