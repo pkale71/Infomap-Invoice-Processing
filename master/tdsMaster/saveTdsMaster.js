@@ -13,13 +13,13 @@ let uuid;
 let isActive;
 let rate;
 let taxSection;
-let gstMasterId;
-let glAccountId;
+let gstMasterUuid;
+let glAccountUuid;
 module.exports = require('express').Router().post('/',async(req,res) => 
 {
     try
     {
-        if(!req.body.description || !req.body.taxSection || !req.body.gstMasterId || !req.body.rate || !req.body.glAccountId)
+        if(!req.body.description || !req.body.taxSection || !req.body.gstMaster || !req.body.gstMaster?.uuid || !req.body.rate || !req.body.glAccount || !req.body.glAccount?.uuid)
         {
             res.status(400)
             return res.json({
