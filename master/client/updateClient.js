@@ -1,4 +1,4 @@
-let db = require('./dbQueryTdsMaster')
+let db = require('./dbQueryClient')
 let uniqueFunction = require('../../common/commonFunction/uniqueSearchFunction')
 let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
 let errorCode = require('../../common/errorCode/errorCode')
@@ -8,6 +8,7 @@ let modifyOn;
 let modifyById;
 let accessToken;
 let uuid;
+let taxCode;
 let isActive;
 let rate;
 let taxSection;
@@ -96,7 +97,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 res.status(500)
                 return res.json({
                     "status_code" : 500,
-                    "message"     : "TDS Data not updated",
+                    "message"     : "Client not updated",
                     "status_name" : getCode.getStatus(500)
                 });
             }
@@ -125,7 +126,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         res.status(500)
         return res.json({
             "status_code" : 500,
-            "message"     : "TDS Data not updated",
+            "message"     : "Client not updated",
             "status_name" : getCode.getStatus(500),
             "error"       : e
         });

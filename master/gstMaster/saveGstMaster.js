@@ -81,7 +81,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Tax Code Should Be Unique",
+                "message"     : "Tax Code Already Exist",
                 "status_name" : getCode.getStatus(400)
             });
         }
