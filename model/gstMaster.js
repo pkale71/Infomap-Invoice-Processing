@@ -17,7 +17,7 @@ class gstMaster {
     {
         this.uuid         =   data.uuid
         this.description  =   data.description
-        this.taxCode      =   data.taxCode
+        this.taxCode      =   data.tax_code
         this.createdOn    =   data.created_on
         this.createdById  =   data.created_by_id
         this.modifyOn     =   data.modify_on
