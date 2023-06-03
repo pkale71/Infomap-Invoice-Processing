@@ -52,7 +52,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         igst = parseFloat(req.body.igst);
-        if(isNan(igst))
+        if(isNaN(igst))
         {
             res.status(400)
             return res.json({

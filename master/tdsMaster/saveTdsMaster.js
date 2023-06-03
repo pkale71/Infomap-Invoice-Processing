@@ -32,7 +32,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         taxSection = req.body.taxSection
         uuid = createUuid.v1()
         rate = parseFloat(req.body.rate);
-        if(!rate)
+        if(isNaN(rate))
         {
             res.status(400)
             return res.json({
@@ -42,7 +42,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         gstMasterId = parseInt(req.body.gstMasterId);
-        if(!gstMasterId)
+        if(isNaN(gstMasterId))
         {
             res.status(400)
             return res.json({
