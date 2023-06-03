@@ -10,15 +10,17 @@ let accessToken;
 let uuid;
 let taxCode;
 let isActive;
-let cgst;
-let sgst;
-let igst;
-let ugst;
+let rate;
+let taxSection;
+let gstMasterUuid;
+let glAccountUuid;
+let gstMasterId;
+let glAccountId;
 module.exports = require('express').Router().post('/',async(req,res) => 
 {
     try
     {
-        if(!req.body.description || !req.body.taxCode || !req.body.cgst || !req.body.sgst || !req.body.igst || !req.body.ugst)
+        if(!req.body.description || !req.body.uuid || !req.body.taxSection || !req.body.gstMaster || !req.body.gstMaster?.uuid || !req.body.rate || !req.body.glAccount || !req.body.glAccount?.uuid)
         {
             res.status(400)
             return res.json({
@@ -28,56 +30,50 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         description = req.body.description;
-        taxCode = req.body.taxCode;
         uuid = req.body.uuid
-        cgst = parseFloat(req.body.cgst);
-        if(!cgst)
+        taxSection = req.body.taxSection
+        gstMasterUuid = req.body.gstMaster?.uuid
+        glAccountUuid = req.body.glAccount?.uuid
+        let ids = await db.getIdsOfAccountAndGst(gstMasterUuid, glAccountUuid)
+        if(ids.length == 0)
         {
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Only number is accepted for CGST",
+                "message"     : "GST Data not Exist",
                 "status_name" : getCode.getStatus(400)
             });
         }
-        sgst = parseFloat(req.body.sgst);
-        if(!sgst)
+        if(!ids[0].glAccountId)
         {
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Only number is accepted for SGST",
+                "message"     : "Gl Account number not Exist",
                 "status_name" : getCode.getStatus(400)
             });
         }
-        igst = parseFloat(req.body.igst);
-        if(!igst)
+        glAccountId = ids[0].glAccountId
+        gstMasterId = ids[0].gstMasterId
+        rate = parseFloat(req.body.rate);
+        if(isNaN(rate))
         {
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Only number is accepted for IGST",
-                "status_name" : getCode.getStatus(400)
-            });
-        }
-        ugst = parseFloat(req.body.ugst);
-        if(!ugst)
-        {
-            res.status(400)
-            return res.json({
-                "status_code" : 400,
-                "message"     : "Only number is accepted for UGST",
+                "message"     : "Only number is accepted for Rate",
                 "status_name" : getCode.getStatus(400)
             });
         }
         accessToken = req.body.accessToken;
-        let identifierName = 'gst_master'
+        let identifierName = 'tds_master'
         let id = 0
-        let columnName = ['description','tax_code']
+        let columnName = ['gl_account_id','tax_section',"gst_master_id"]
         let columnValue = 
         {
-            "tax_code" : taxCode,
-            "description" : description
+            "tax_section" : taxSection,
+            "gl_account_id" : glAccountId,
+            "gst_master_id": gstMasterId
         }
         isActive = 1
         let uniqueCheck = await uniqueFunction.unquieName(identifierName, columnName, columnValue, 0, uuid)
@@ -86,8 +82,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             modifyOn = new Date()
             authData = await commondb.selectToken(accessToken)
             modifyById = authData[0].userId
-            let updateGstMaster = await db.updateGstMaster(uuid, description, taxCode, cgst, sgst, igst, ugst, modifyOn, modifyById, isActive)
-            if(updateGstMaster.affectedRows > 0)
+            let updateTdsMaster = await db.updateTdsMaster(uuid, description, taxSection, rate, glAccountId, gstMasterId, modifyOn, modifyById, isActive)
+            if(updateTdsMaster.affectedRows > 0)
             {
                 res.status(200)
                 return res.json({
@@ -101,7 +97,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 res.status(500)
                 return res.json({
                     "status_code" : 500,
-                    "message"     : "GST Data not updated",
+                    "message"     : "TDS Data not updated",
                     "status_name" : getCode.getStatus(500)
                 });
             }
@@ -111,7 +107,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "GST Data Already Exist For Tax Code And Description",
+                "message"     : "TDS Data Already Exist For Tax Section, GL Account Number And GST Data",
                 "status_name" : getCode.getStatus(400)
             });
         }
@@ -130,7 +126,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         res.status(500)
         return res.json({
             "status_code" : 500,
-            "message"     : "GST Data not updated",
+            "message"     : "TDS Data not updated",
             "status_name" : getCode.getStatus(500),
             "error"       : e
         });

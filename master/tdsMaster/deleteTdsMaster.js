@@ -45,7 +45,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 res.status(500)
                 return res.json({
                     "status_code" : 500,
-                    "message"     : "GST Data not deleted",
+                    "message"     : "TDS Data not deleted",
                     "status_name" : getCode.getStatus(500)
                 });
             }
@@ -55,7 +55,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "GST Data is already in use",
+                "message"     : "TDS Data is already in use",
                 "status_name" : getCode.getStatus(400)
             });
         }
@@ -66,7 +66,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         res.status(500)
         return res.json({
             "status_code" : 500,
-            "message"     : "GST Data not deleted",
+            "message"     : "TDS Data not deleted",
             "status_name" : getCode.getStatus(500),
             "error"       : e
         });
