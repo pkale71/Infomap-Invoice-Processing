@@ -15,7 +15,7 @@ class tdsMaster {
     setDataAll(data)
     {
         this.uuid           =   data.uuid
-        this.description    =   data.name
+        this.description    =   data.description
         this.createdOn      =   data.created_on
         this.createdById    =   data.created_by_id
         this.modifyOn       =   data.modify_on
