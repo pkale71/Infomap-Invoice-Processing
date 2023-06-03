@@ -35,6 +35,10 @@ masterRoute.use('/saveGSTMaster',require('../authenticate/validateToken'),requir
 masterRoute.use('/updateGSTMaster',require('../authenticate/validateToken'),require('./gstMaster/updateGstMaster'))
 masterRoute.use('/deleteGSTMaster',require('../authenticate/validateToken'),require('./gstMaster/deleteGstMaster'))
 masterRoute.use('/getGSTMasters',require('../authenticate/validateToken'),require('./gstMaster/getGstMasters'))
+masterRoute.use('/saveTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/saveTdsMaster'))
+masterRoute.use('/updateTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/updateTdsMaster'))
+masterRoute.use('/deleteTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/deleteTdsMaster'))
+masterRoute.use('/getTDSMasters',require('../authenticate/validateToken'),require('./tdsMaster/getTdsMasters'))
 
 masterRoute.use('/',(req,res,next) => 
 {
