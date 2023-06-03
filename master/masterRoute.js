@@ -31,6 +31,10 @@ masterRoute.use('/savePurchasingGroup',require('../authenticate/validateToken'),
 masterRoute.use('/updatePurchasingGroup',require('../authenticate/validateToken'),require('./purchasingGroup/updatePurchasingGroup'))
 masterRoute.use('/deletePurchasingGroup',require('../authenticate/validateToken'),require('./purchasingGroup/deletePurchasingGroup'))
 masterRoute.use('/getPurchasingGroups',require('../authenticate/validateToken'),require('./purchasingGroup/getPurchasingGroups'))
+masterRoute.use('/saveGSTMaster',require('../authenticate/validateToken'),require('./gstMaster/saveGstMaster'))
+masterRoute.use('/updateGSTMaster',require('../authenticate/validateToken'),require('./gstMaster/updateGstMaster'))
+masterRoute.use('/deleteGSTMaster',require('../authenticate/validateToken'),require('./gstMaster/deleteGstMaster'))
+masterRoute.use('/getGSTMasters',require('../authenticate/validateToken'),require('./gstMaster/getGstMasters'))
 
 masterRoute.use('/',(req,res,next) => 
 {
