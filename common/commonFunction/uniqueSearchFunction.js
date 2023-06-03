@@ -12,7 +12,7 @@ uniqueFunction.unquieName = (identifierName, columnName, columnValue, id, uuid) 
             {
                 if(columnName[i] == 'name' || columnName[i] == 'code'|| columnName[i] == 'tax_code'|| columnName[i] == 'description')
                 {
-                    condition = 'UPPER(' + condition + columnName[i] + ') = ' + 'UPPER(' + `'${columnValue[columnName[i]]}'` + ')'
+                    condition = condition + 'UPPER('+ columnName[i] +  ') = ' + 'UPPER(' + `'${columnValue[columnName[i]]}'` + ')'
                 }
                 else
                 {

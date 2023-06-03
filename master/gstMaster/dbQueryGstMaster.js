@@ -47,7 +47,7 @@ db.updateGstMaster = (uuid, description, taxCode, cgst, sgst, igst, ugst, modify
     })
 }
 
-db.getGstMaster = () => 
+db.getGstMasters = () => 
 {
     return new Promise((resolve, reject) => 
     {
