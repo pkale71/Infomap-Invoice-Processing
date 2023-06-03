@@ -1,4 +1,4 @@
-let db = require('./dbQueryGstMaster')
+let db = require('./dbQueryTdsMaster')
 let gstMasterObj = require('../../model/gstMaster')
 let gstMaster = new gstMasterObj()
 let errorCode = require('../../common/errorCode/errorCode')

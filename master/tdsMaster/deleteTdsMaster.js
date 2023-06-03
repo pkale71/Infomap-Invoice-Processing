@@ -1,4 +1,4 @@
-let db = require('./dbQueryGstMaster')
+let db = require('./dbQueryTdsMaster')
 let errorCode = require('../../common/errorCode/errorCode')
 let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
 let getCode = new errorCode()

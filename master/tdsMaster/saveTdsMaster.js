@@ -1,4 +1,4 @@
-let db = require('./dbQueryGstMaster')
+let db = require('./dbQueryTdsMaster')
 let uniqueFunction = require('../../common/commonFunction/uniqueSearchFunction')
 let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
 let errorCode = require('../../common/errorCode/errorCode')
@@ -11,15 +11,15 @@ let accessToken;
 let taxCode;
 let uuid;
 let isActive;
-let cgst;
-let sgst;
-let igst;
-let ugst;
+let rate;
+let taxSection;
+let gstMasterId;
+let glAccountId;
 module.exports = require('express').Router().post('/',async(req,res) => 
 {
     try
     {
-        if(!req.body.description || !req.body.taxCode || !req.body.cgst || !req.body.sgst || !req.body.igst || !req.body.ugst)
+        if(!req.body.description || !req.body.taxSection || !req.body.gstMasterId || !req.body.rate || !req.body.glAccountId)
         {
             res.status(400)
             return res.json({
@@ -29,20 +29,20 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         description = req.body.description;
-        taxCode = req.body.taxCode
+        taxSection = req.body.taxSection
         uuid = createUuid.v1()
-        cgst = parseFloat(req.body.cgst);
-        if(!cgst)
+        rate = parseFloat(req.body.rate);
+        if(!rate)
         {
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Only number is accepted for CGST",
+                "message"     : "Only number is accepted for Rate",
                 "status_name" : getCode.getStatus(400)
             });
         }
-        sgst = parseFloat(req.body.sgst);
-        if(!sgst)
+        gstMasterId = parseInt(req.body.gstMasterId);
+        if(!gstMasterId)
         {
             res.status(400)
             return res.json({

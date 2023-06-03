@@ -31,7 +31,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         taxCode = req.body.taxCode;
         uuid = req.body.uuid
         cgst = parseFloat(req.body.cgst);
-        if(!cgst)
+        if(isNaN(cgst))
         {
             res.status(400)
             return res.json({
@@ -41,7 +41,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         sgst = parseFloat(req.body.sgst);
-        if(!sgst)
+        if(isNaN(sgst))
         {
             res.status(400)
             return res.json({
@@ -51,7 +51,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         igst = parseFloat(req.body.igst);
-        if(!igst)
+        if(isNaN(igst))
         {
             res.status(400)
             return res.json({
@@ -61,7 +61,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         ugst = parseFloat(req.body.ugst);
-        if(!ugst)
+        if(isNaN(ugst))
         {
             res.status(400)
             return res.json({
