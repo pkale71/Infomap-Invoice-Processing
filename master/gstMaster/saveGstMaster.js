@@ -72,6 +72,20 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         accessToken = req.body.accessToken;
+        // For Tax code check
+        let uniqueTaxCode = await uniqueFunction.unquieName('gst_master', ['tax_code'], {
+            "tax_code" : taxCode
+        }, 0, 0)
+        if(uniqueTaxCode == 1 || uniqueTaxCode == -1)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "Tax Code Should Be Unique",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
+        //For combination check
         let identifierName = 'gst_master'
         let id = 0
         let columnName = ['description','tax_code']
