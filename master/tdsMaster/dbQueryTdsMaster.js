@@ -53,10 +53,14 @@ db.getTdsMasters = () =>
     {
         try
         {
-            let sql = `SELECT uuid, description, tax_code, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id, is_active, cgst, sgst, igst, ugst
-            FROM tds_master
-            WHERE is_active = 1
-            ORDER BY id`
+            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, convert_tz(tm.created_on,'+00:00','+05:30') AS created_on, created_by_id,
+            convert_tz(tm.modify_on,'+00:00','+05:30') AS modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
+            gm.uuid AS gstUuid, gm.tax_code, gm.description AS gstDescription
+                       FROM tds_master tm
+                       LEFT JOIN gl_account ga ON ga.id = tm.gl_account_id
+                       LEFT JOIN gst_master gm ON gm.id = tm.gst_master_id
+                       WHERE tm.is_active = 1
+                       ORDER BY tm.id`
             pool.query(sql,(error, result) => 
             {
                 if(error)
