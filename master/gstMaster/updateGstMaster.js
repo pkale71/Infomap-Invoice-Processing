@@ -18,7 +18,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 {
     try
     {
-        if(!req.body.description || !req.body.taxCode || (!req.body.igst || (!req.body.cgst && !req.body.sgst)) || !req.body.ugst)
+        if(!req.body.description || !req.body.taxCode || (!req.body.igst && (!req.body.cgst || !req.body.sgst))  || !req.body.ugst)
         {
             res.status(400)
             return res.json({
