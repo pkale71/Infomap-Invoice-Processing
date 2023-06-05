@@ -54,7 +54,7 @@ db.getClients = () =>
         try
         {
             let sql = `SELECT c.uuid, convert_tz(c.created_on,'+00:00','+05:30') AS created_on, c.created_by_id, convert_tz(c.modify_on,'+00:00','+05:30') AS modify_on, 
-            c.modify_by_id, c.is_active, c.name, c.address, c.landmark, c.gst_number, c.pan_number, c.cin_number, c.msme_number,
+            c.modify_by_id, c.is_active, c.code, c.name, c.address, c.landmark, c.gst_number, c.pan_number, c.cin_number, c.msme_number,
             co.id AS countryId, co.name AS countryName, s.id AS stateId, s.name AS stateName, cy.id AS cityId, cy.name AS cityName
             FROM client c
             LEFT JOIN country co ON co.id = c.country_id

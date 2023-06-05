@@ -1,38 +1,38 @@
 let db = require('./dbQueryClient')
-let tdsMasterObj = require('../../model/tdsMaster')
-let tdsMaster = new tdsMasterObj()
+let clientObj = require('../../model/client')
+let client = new clientObj()
 let errorCode = require('../../common/errorCode/errorCode')
 let getCode = new errorCode()
-let getTdsMasters;
-let tdsMasterList = []
+let getClients;
+let clientMasterList = []
 module.exports = require('express').Router().get('/',async(req,res) => 
 {
     try
     {
-        getTdsMasters = await db.getTdsMasters()
-        if(getTdsMasters.length == 0)
+        getClients = await db.getClients()
+        if(getClients.length == 0)
         {
             res.status(200)
             return res.json({
                 "status_code" : 200,
                 "message"     : "success",
-                "data"        : {"tdsMasters" : []},
+                "data"        : {"clients" : []},
                 "status_name" : getCode.getStatus(200)
             });
         }
         else
         {
-            tdsMasterList = []
-            getTdsMasters.forEach((element) => 
+            clientMasterList = []
+            getClients.forEach((element) => 
             {
-                tdsMaster.setDataAll(element)
-                tdsMasterList.push(tdsMaster.getDataAll())
+                client.setDataAll(element)
+                clientMasterList.push(client.getDataAll())
             });
             res.status(200)
             return res.json({
                 "status_code" : 200,
                 "message"     : "success",
-                "data"        : {"tdsMasters" : tdsMasterList},
+                "data"        : {"clients" : clientMasterList},
                 "status_name" : getCode.getStatus(200)
             });
         }
