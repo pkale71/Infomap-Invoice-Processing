@@ -106,7 +106,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "TDS Data Already Exist For Tax Section, GL Account Number And GST Data",
+                "message"     : "TDS Master Already Exist For GL Code, Tax Code And Tax Section",
                 "status_name" : getCode.getStatus(400)
             });
         }
