@@ -1,6 +1,6 @@
 let db = require('./dbQueryClient')
-let errorCode = require('../../common/errorCode/errorCode')
-let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
+let errorCode = require('../common/errorCode/errorCode')
+let commondb = require('../common/commonFunction/dbQueryCommonFuntion')
 let getCode = new errorCode()
 let uuid;
 let isActive;

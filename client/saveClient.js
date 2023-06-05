@@ -1,7 +1,7 @@
 let db = require('./dbQueryClient')
-let uniqueFunction = require('../../common/commonFunction/uniqueSearchFunction')
-let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
-let errorCode = require('../../common/errorCode/errorCode')
+let uniqueFunction = require('../common/commonFunction/uniqueSearchFunction')
+let commondb = require('../common/commonFunction/dbQueryCommonFuntion')
+let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 let createUuid = require('uuid')
 let code;
