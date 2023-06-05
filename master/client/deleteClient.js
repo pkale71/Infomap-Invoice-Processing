@@ -30,8 +30,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             modifyOn = new Date()
             authData = await commondb.selectToken(accessToken)
             modifyById = authData[0].userId
-            let deleteTdsMaster = await db.deleteTdsMaster(uuid, isActive, modifyOn, modifyById)
-            if(deleteTdsMaster.affectedRows > 0)
+            let deleteClient = await db.deleteClient(uuid, isActive, modifyOn, modifyById)
+            if(deleteClient.affectedRows > 0)
             {
                 res.status(200)
                 return res.json({

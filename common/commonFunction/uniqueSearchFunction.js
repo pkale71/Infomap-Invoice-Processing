@@ -10,7 +10,7 @@ uniqueFunction.unquieName = (identifierName, columnName, columnValue, id, uuid) 
             let returnRes = -1
             for(let i = 0; i < columnName.length; i++)
             {
-                if(columnName[i] == 'name' || columnName[i] == 'code'|| columnName[i] == 'tax_code'|| columnName[i] == 'description' || columnName[i] == 'gl_account_id' || columnName[i] == 'tax_section')
+                if(columnName[i] == 'name' || columnName[i] == 'code'|| columnName[i] == 'tax_code'|| columnName[i] == 'description' || columnName[i] == 'gl_account_id' || columnName[i] == 'tax_section' || columnName[i] == 'gst_number' || columnName[i] == 'pan_number' || columnName[i] == 'cin_number' || columnName[i] == 'msme_number')
                 {
                     condition = condition + 'UPPER('+ columnName[i] +  ') = ' + 'UPPER(' + `'${columnValue[columnName[i]]}'` + ')'
                 }

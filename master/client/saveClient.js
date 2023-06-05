@@ -4,23 +4,27 @@ let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
 let errorCode = require('../../common/errorCode/errorCode')
 let getCode = new errorCode()
 let createUuid = require('uuid')
-let description;
+let code;
 let createdOn;
 let createdById;
 let accessToken;
 let uuid;
 let isActive;
-let rate;
-let taxSection;
-let gstMasterUuid;
-let glAccountUuid;
-let gstMasterId;
-let glAccountId;
+let name;
+let address;
+let landmark;
+let countryId;
+let stateId;
+let cityId;
+let gstNumber;
+let panNumber;
+let cinNumber;
+let msmeNumber;
 module.exports = require('express').Router().post('/',async(req,res) => 
 {
     try
     {
-        if(!req.body.name || !req.body.address || !req.body.gstMaster || !req.body.gstMaster?.uuid || !parseFloat(req.body.rate) || !req.body.glAccount || !req.body.glAccount?.uuid)
+        if(!req.body.code || !req.body.name || !req.body.address || !req.body.landmark || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id)|| !req.body.gstNumber || !req.body.panNumber || !req.body.cinNumber ||!req.body.msmeNumber)
         {
             res.status(400)
             return res.json({
@@ -29,51 +33,66 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 "status_name" : getCode.getStatus(400)
             });
         }
-        description = req.body.description;
-        taxSection = req.body.taxSection
-        gstMasterUuid = req.body.gstMaster?.uuid
-        glAccountUuid = req.body.glAccount?.uuid
-        let ids = await db.getIdsOfAccountAndGst(gstMasterUuid, glAccountUuid)
-        if(ids.length == 0)
-        {
-            res.status(400)
-            return res.json({
-                "status_code" : 400,
-                "message"     : "GST Data not Exist",
-                "status_name" : getCode.getStatus(400)
-            });
-        }
-        if(!ids[0].glAccountId)
-        {
-            res.status(400)
-            return res.json({
-                "status_code" : 400,
-                "message"     : "Gl Account number not Exist",
-                "status_name" : getCode.getStatus(400)
-            });
-        }
-        glAccountId = ids[0].glAccountId
-        gstMasterId = ids[0].gstMasterId
+        code = req.body.code;
+        name = req.body.name
+        address = req.body.address
+        landmark = req.body.landmark
+        countryId = req.body.country?.id
+        stateId = req.body.state?.id
+        cityId = req.body.city?.id
+        gstNumber = req.body.gstNumber
+        panNumber = req.body.panNumber
+        cinNumber = req.body.cinNumber
+        msmeNumber = req.body.msmeNumber
         uuid = createUuid.v1()
-        rate = parseFloat(req.body.rate);
-        if(isNaN(rate))
+        accessToken = req.body.accessToken;
+        let identifierName = 'client'
+        let id = 0
+        let uniqueCheckGstNumber = await uniqueFunction.unquieName(identifierName, ['gst_number'],  {
+        "gst_number" : gstNumber } , id, 0)
+        if(uniqueCheckGstNumber != 0)
         {
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Only number is accepted for Rate",
+                "message"     : "GST Number Already Exist",
                 "status_name" : getCode.getStatus(400)
             });
         }
-        accessToken = req.body.accessToken;
-        let identifierName = 'tds_master'
-        let id = 0
-        let columnName = ['gl_account_id','tax_section',"gst_master_id"]
+        let uniqueCheckPanNumber = await uniqueFunction.unquieName(identifierName, ['pan_number'],  { "pan_number" : panNumber } , id, 0)
+        if(uniqueCheckPanNumber != 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "PAN Number Already Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
+        let uniqueCheckCinNumber = await uniqueFunction.unquieName(identifierName, ['cin_number'],  { "cin_number" : cinNumber } , id, 0)
+        if(uniqueCheckCinNumber != 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "CIN Number Already Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
+        let uniqueCheckMsmeNumber = await uniqueFunction.unquieName(identifierName, ['msme_number'],  { "msme_number" : msmeNumber } , id, 0)
+        if(uniqueCheckMsmeNumber != 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "MSME Number Already Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
+        let columnName = ['code']
         let columnValue = 
         {
-            "tax_section" : taxSection,
-            "gl_account_id" : glAccountId,
-            "gst_master_id": gstMasterId
+            "code" : code,
         }
         let uniqueCheck = await uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0)
         if(uniqueCheck == 0)
@@ -82,10 +101,10 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             authData = await commondb.selectToken(accessToken)
             createdById = authData[0].userId
             isActive = 1
-            let saveTdsMaster = await db.saveTdsMaster(uuid, description, taxSection, rate, glAccountId, gstMasterId, createdOn, createdById, isActive)
-            if(saveTdsMaster.affectedRows > 0)
+            let saveClient = await db.saveClient(uuid, code, name, address, landmark, gstNumber, panNumber, cinNumber, msmeNumber, countryId, stateId, cityId, createdOn, createdById, isActive)
+            if(saveClient.affectedRows > 0)
             {
-                let returnUuid = await db.getReturnUuid(saveTdsMaster.insertId)
+                let returnUuid = await db.getReturnUuid(saveClient.insertId)
                 res.status(200)
                 return res.json({
                     "status_code" : 200,
@@ -109,7 +128,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             res.status(400)
             return res.json({
                 "status_code" : 400,
-                "message"     : "Client Already Exist For Tax Section, GL Account Number And GST Data",
+                "message"     : "Client code Already Exist",
                 "status_name" : getCode.getStatus(400)
             });
         }
