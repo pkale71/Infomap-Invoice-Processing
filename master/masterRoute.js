@@ -39,10 +39,10 @@ masterRoute.use('/saveTDSMaster',require('../authenticate/validateToken'),requir
 masterRoute.use('/updateTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/updateTdsMaster'))
 masterRoute.use('/deleteTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/deleteTdsMaster'))
 masterRoute.use('/getTDSMasters',require('../authenticate/validateToken'),require('./tdsMaster/getTdsMasters'))
-masterRoute.use('/saveClient',require('../authenticate/validateToken'),require('./client/saveClient'))
-masterRoute.use('/updateClient',require('../authenticate/validateToken'),require('./client/updateClient'))
-masterRoute.use('/deleteClient',require('../authenticate/validateToken'),require('./client/deleteClient'))
-masterRoute.use('/getClients',require('../authenticate/validateToken'),require('./client/getClients'))
+masterRoute.use('/saveClient',require('../authenticate/validateToken'),require('../client/saveClient'))
+masterRoute.use('/updateClient',require('../authenticate/validateToken'),require('../client/updateClient'))
+masterRoute.use('/deleteClient',require('../authenticate/validateToken'),require('../client/deleteClient'))
+masterRoute.use('/getClients',require('../authenticate/validateToken'),require('../client/getClients'))
 
 masterRoute.use('/',(req,res,next) => 
 {

@@ -1,4 +1,4 @@
-let pool = require('../../databaseConnection/createconnection')
+let pool = require('../databaseConnection/createconnection')
 let db = {}
 
 db.saveClient = (uuid, code, name, address, landmark, gstNumber, panNumber, cinNumber, msmeNumber, countryId, stateId, cityId, createdOn, createdById, isActive) => 

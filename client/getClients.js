@@ -1,7 +1,7 @@
 let db = require('./dbQueryClient')
-let clientObj = require('../../model/client')
+let clientObj = require('../model/client')
 let client = new clientObj()
-let errorCode = require('../../common/errorCode/errorCode')
+let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 let getClients;
 let clientMasterList = []

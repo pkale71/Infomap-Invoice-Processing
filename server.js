@@ -12,6 +12,7 @@ dotenv.config()
 
 app.use('/common',require('./common/commonRoute'))
 app.use('/master',require('./master/masterRoute'))
+app.use('/client',require('./client/clientRoute'))
 app.use('/auth',require('./authenticate/authenticateRoute'))
 app.use('/',(req,res,next) =>
 {
