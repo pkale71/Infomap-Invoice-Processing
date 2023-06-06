@@ -25,10 +25,10 @@ class Client {
         this.name           =   data.name
         this.address           =   data.address
         this.landmark           =   data.landmark
-        this.gstNumber           =   data.gstNumber
-        this.panNumber           =   data.panNumber
-        this.cinNumber           =   data.cinNumber
-        this.msmeNumber           =   data.msmeNumber
+        this.gstNumber           =   data.gst_number
+        this.panNumber           =   data.pan_number
+        this.cinNumber           =   data.cin_number
+        this.msmeNumber           =   data.msme_number
         this.createdOn      =   data.created_on
         this.createdById    =   data.created_by_id
         this.modifyOn       =   data.modify_on
