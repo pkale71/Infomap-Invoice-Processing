@@ -84,7 +84,7 @@ class vendor {
             gstNumber   :   this.gstNumber,
             panNumber   :   this.panNumber,
             industryType    :   this.industryType,
-            remarks    :   this.remarks
+            remark    :   this.remarks
         }
     }
 }
