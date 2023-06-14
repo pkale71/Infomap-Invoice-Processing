@@ -199,8 +199,8 @@ function scanUniqueVendorCode(ele, start, end, accepted,rejected, res)
     "message" : "success",
     "status_name" : getCode.getStatus(200),
     "data"     :    {
-            "vendorAccepted" : accepted,
-            "vendorRejected" : rejected
+            "acceptedVendors" : accepted,
+            "rejectedVendors" : rejected
           }
     })
   }
