@@ -14,6 +14,7 @@ app.use('/common',require('./common/commonRoute'))
 app.use('/master',require('./master/masterRoute'))
 app.use('/client',require('./client/clientRoute'))
 app.use('/auth',require('./authenticate/authenticateRoute'))
+app.use('/vendor',require('./vender/vendorRoute'))
 app.use('/',(req,res,next) =>
 {
     return res.status(400).json({

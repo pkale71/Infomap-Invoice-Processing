@@ -7,12 +7,15 @@ db.getUnique = (sql) =>
     {
         try
         {
+           // console.log(sql)
             pool.query(sql,(error, result) => 
             {
                 if(error)
                 {
                     return reject(error);
-                }          
+                }   
+                //console.log(sql)
+                //pool.release()       
                 return resolve(result);
             });
         }
