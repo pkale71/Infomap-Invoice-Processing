@@ -86,7 +86,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                     {
                       //  console.log(ele['EMAIL ADDR1'].match(emailpattern))
                       //  console.log(emailpattern.test(ele['EMAIL ADDR1']))
-                      if(ele['EMAIL ADDR1'] != '' || ele['EMAIL ADDR1'] != null)
+                      if(ele['EMAIL ADDR1'] != '' && ele['EMAIL ADDR1'] != null)
                       {
                         console.log(ele['EMAIL ADDR1'].match(emailpattern), emailpattern.test(ele['EMAIL ADDR1']))
                         let check = ele['EMAIL ADDR1'].match(emailpattern)
@@ -143,9 +143,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                       }
                       else
                       {
-                        ele['REMARKS'] = `EMAIL IS EMPTY`
-                        vendorSet.setScanFile(ele)
-                        rejected.push(vendorSet.getScanFile())
+                        values.push(ele['VENDOR NUMBER'].toString())
+                        vendorsList.push(ele)
                         return
                       }
                     }
