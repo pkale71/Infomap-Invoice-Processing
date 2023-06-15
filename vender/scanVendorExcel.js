@@ -86,6 +86,12 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                     {
                       //  console.log(ele['EMAIL ADDR1'].match(emailpattern))
                       //  console.log(emailpattern.test(ele['EMAIL ADDR1']))
+                      if((ele['EMAIL ADDR1'] == '' || ele['EMAIL ADDR1'] == null) && (ele['EMAIL ADDR2'] == '' || ele['EMAIL ADDR2'] == null) && ( ele['EMAIL ADDR2'] == '' || ele['EMAIL ADDR2'] == null))
+                      {
+                        values.push(ele['VENDOR NUMBER'].toString())
+                        vendorsList.push(ele)
+                        return
+                      }
                       if(ele['EMAIL ADDR1'] != '' && ele['EMAIL ADDR1'] != null)
                       {
                         console.log(ele['EMAIL ADDR1'].match(emailpattern), emailpattern.test(ele['EMAIL ADDR1']))
@@ -93,7 +99,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                         if(check != null && emailpattern.test(ele['EMAIL ADDR1']))
                         {
                           ele['EMAIL ADDR1'] = check[0]
-                          if(ele['EMAIL ADDR2'] != '' || ele['EMAIL ADDR2'] != '' || ele['EMAIL ADDR2'] != null || ele['EMAIL ADDR2'] != null )
+                          if((ele['EMAIL ADDR2'] != '' && ele['EMAIL ADDR2'] != null) || ( ele['EMAIL ADDR2'] != '' && ele['EMAIL ADDR2'] != null) )
                           {
                             let email2 = ele['EMAIL ADDR2'].match(emailpattern)
                             let email3 = ele['EMAIL ADDR3'].match(emailpattern)

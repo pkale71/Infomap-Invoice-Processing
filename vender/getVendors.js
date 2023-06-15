@@ -1,4 +1,4 @@
-let db = require('./dbQueryClient')
+let db = require('./dbQueryVendors')
 let vendorObj = require('../model/vendor')
 let vendor = new vendorObj()
 let errorCode = require('../common/errorCode/errorCode')

@@ -7,6 +7,10 @@ class vendor {
     modifyById
     state
     isActive
+    client
+    email1
+    email2
+    email3
 
     code
     name
@@ -93,11 +97,8 @@ class vendor {
         this.uuid             =   data.uuid
         this.code             =   data.code
         this.name           =   data.name
-        this.address           =   data.address
-        this.landmark           =   data.landmark
         this.gstNumber           =   data.gst_number
         this.panNumber           =   data.pan_number
-        this.cinNumber           =   data.cin_number
         this.msmeNumber           =   data.msme_number
         this.createdOn      =   data.created_on
         this.createdById    =   data.created_by_id
@@ -117,6 +118,26 @@ class vendor {
                                     "id" : data.cityId,
                                     "name" : data.cityName,
                                 }
+        this.client         =   {
+                                    "uuid" : data.clientUuid,
+                                    "code" : data.clientCode,
+                                    "name" : data.clientName
+                                }
+        this.accountGroup       =   data.account_group
+        this.addressLine1       =   data.address_line1
+        this.addressLine2       =   data.address_line2
+        this.addressLine3       =   data.address_line3
+        this.addressLine4       =   data.address_line4
+        this.postalCode     =   data.postal_code
+        this.corporateGroup     =   data.corporate_group
+        this.contact1       =   data.contact1
+        this.contact2       =   data.contact2
+        this.telephoneExchange      =   data.telephone_exchange
+        this.faxNumber      =   data.fax_number
+        this.email1      =   data.email1
+        this.email2      =   data.email2
+        this.email3      =   data.email3
+        this.industryType       =   data.industry_type
     }
 
     getDataAll()
@@ -125,8 +146,6 @@ class vendor {
             uuid        :   this.uuid,
             code        :   this.code,
             name        :   this.name,
-            address     :   this.address,
-            landmark        :   this.landmark,
             gstNumber       :   this.gstNumber,
             panNumber       :   this.panNumber,
             cinNumber       :   this.cinNumber,
@@ -138,7 +157,22 @@ class vendor {
             country     :   this.country,
             state       :   this.state,
             city        :   this.city,
-            isActive    : this.isActive
+            isActive    : this.isActive,
+            accountGroup : this.accountGroup,
+            addressLine1    :   this.addressLine1,
+            addressLine2    :   this.addressLine1,
+            addressLine3    :   this.addressLine2,
+            addressLine4    :   this.addressLine3,
+            postalCode  :   this.addressLine4,
+            corporateGroup  :   this.corporateGroup,
+            contact1    :   this.contact1,
+            contact2    :   this.contact2,
+            telephoneExchange   :   this.telephoneExchange,
+            faxNumber   :   this.faxNumber,
+            email1  :   this.email1,
+            email2  :   this.email2,
+            email3  :   this.email3,
+            industryType    :   this.industryType
         }
     }
 }
