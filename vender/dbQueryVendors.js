@@ -31,6 +31,32 @@ db.saveVendors = (ele) =>
     })
 }
 
+db.saveVendor = (uuid, code, name, addressLine1, addressLine2, addressLine3, addressLine4, email1, email2, email3, gstNumber, panNumber, faxNumber, msmeNumber, countryId, stateId, cityId, clientId, createdOn, postalCode, corporateGroup, contact1, contact2, telephoneExchange, industryType, accountGroup, createdById, isActive) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `INSERT into vendor (code, name, is_active, email1, email2, email3, account_group, corporate_group, address_line1, address_line2, address_line3, address_line4, contact1, contact2, gst_number, pan_number, fax_number, industry_type, created_on, created_by_id, uuid, telephone_exchange, country_id, city_id, postal_code, msme_number, state_id, client_id) VALUES ('${code}', '${uniqueFunction.manageSpecialCharacter(name)}', ${isActive}, '${email1}', '${email2}', '${email3}', '${accountGroup}', '${corporateGroup}', '${uniqueFunction.manageSpecialCharacter(addressLine1)}', '${uniqueFunction.manageSpecialCharacter(addressLine2)}', '${uniqueFunction.manageSpecialCharacter(addressLine3)}', '${uniqueFunction.manageSpecialCharacter(addressLine4)}', '${contact1}', '${contact2}', '${gstNumber}', '${panNumber}', '${faxNumber}', '${industryType}', ?, '${createdById}', '${uuid}', '${telephoneExchange}', ${countryId}, 
+            ${cityId}, '${postalCode}', '${msmeNumber}', ${stateId}, ${clientId} )`
+
+            pool.query(sql, [createdOn], (error, result) => 
+            {
+                if(error)
+                {
+                    console.log(sql)
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 db.getCityId = (name, code) => 
 {
     return new Promise((resolve, reject) => 
@@ -95,7 +121,7 @@ db.updateVendor = (uuid, name, addressLine1, addressLine2, addressLine3, address
     {
         try
         {
-            let sql = `UPDATE vendor SET  modify_on = ?, modify_by_id = ${modifyById}, name = '${name}', is_active = ${isActive}, address_line1 = '${addressLine1}', address_line2 = '${addressLine2}', address_line3 = '${addressLine3}', address_line4 = '${addressLine4}', email1 = '${email1}', email2 = '${email2}', email3 = '${email3}', gst_number = '${gstNumber}', pan_number = '${panNumber}', fax_number = '${faxNumber}', msme_number = '${msmeNumber}', country_id = ${countryId}, state_id = ${stateId}, city_id = ${cityId}, client_id = ${clientId}, account_group = '${accountGroup}', corporate_group = '${corporateGroup}', postal_code = '${postalCode}', industry_type = '${industryType}', contact1 = '${contact1}', contact2 = '${contact2}', telephone_exchange = '${telephoneExchange}' WHERE uuid = '${uuid}'`
+            let sql = `UPDATE vendor SET  modify_on = ?, modify_by_id = ${modifyById}, name = '${uniqueFunction.manageSpecialCharacter(name)}', is_active = ${isActive}, address_line1 = '${uniqueFunction.manageSpecialCharacter(addressLine1)}', address_line2 = '${uniqueFunction.manageSpecialCharacter(addressLine2)}', address_line3 = '${uniqueFunction.manageSpecialCharacter(addressLine3)}', address_line4 = '${uniqueFunction.manageSpecialCharacter(addressLine4)}', email1 = '${email1}', email2 = '${email2}', email3 = '${email3}', gst_number = '${gstNumber}', pan_number = '${panNumber}', fax_number = '${faxNumber}', msme_number = '${msmeNumber}', country_id = ${countryId}, state_id = ${stateId}, city_id = ${cityId}, client_id = ${clientId}, account_group = '${accountGroup}', corporate_group = '${corporateGroup}', postal_code = '${postalCode}', industry_type = '${industryType}', contact1 = '${uniqueFunction.manageSpecialCharacter(contact1)}', contact2 = '${uniqueFunction.manageSpecialCharacter(contact2)}', telephone_exchange = '${telephoneExchange}' WHERE uuid = '${uuid}'`
             pool.query(sql, [modifyOn], (error, result) => 
             {
                 if(error)
@@ -112,51 +138,51 @@ db.updateVendor = (uuid, name, addressLine1, addressLine2, addressLine3, address
     })
 }
 
-// db.deleteClient = (uuid, isActive, modifyOn, modifyById) => 
-// {
-//     return new Promise((resolve, reject) => 
-//     {
-//         try
-//         {
-//             let sql = `UPDATE client SET modify_on = ?, modify_by_id = ${modifyById}, is_active = ${isActive} WHERE uuid = '${uuid}'`
-//             pool.query(sql, [modifyOn], (error, result) => 
-//             {
-//                 if(error)
-//                 {
-//                     return reject(error);
-//                 }          
-//                 return resolve(result);
-//             });
-//         }
-//         catch(e)
-//         {
-//             throw e
-//         }
-//     })
-// }
+db.deleteVendor = (uuid, isActive, modifyOn, modifyById) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `UPDATE vendor SET modify_on = ?, modify_by_id = ${modifyById}, is_active = ${isActive} WHERE uuid = '${uuid}'`
+            pool.query(sql, [modifyOn], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
 
-// db.getReturnUuid = (id) => 
-// {
-//     return new Promise((resolve, reject) => 
-//     {
-//         try
-//         {
-//             let sql = `SELECT uuid
-//             FROM client
-//             WHERE id = ${id}`
-//             pool.query(sql,(error, result) => 
-//             {
-//                 if(error)
-//                 {
-//                     return reject(error);
-//                 }          
-//                 return resolve(result);
-//             });
-//         }
-//         catch(e)
-//         {
-//             throw e
-//         }
-//     })
-// }
+db.getReturnUuid = (id) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT uuid
+            FROM vendor
+            WHERE id = ${id}`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
 module.exports = db

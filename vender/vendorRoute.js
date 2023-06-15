@@ -7,7 +7,8 @@ vendorRoute.use('/scanVendorExcel',require('../authenticate/validateToken'),requ
 vendorRoute.use('/saveScanVendors',require('../authenticate/validateToken'),require('./saveScanVendors'))
 vendorRoute.use('/getVendors',require('../authenticate/validateToken'),require('./getVendors'))
 vendorRoute.use('/updateVendor',require('../authenticate/validateToken'),require('./updateVendor'))
-vendorRoute.use('/saveVendor',require('../authenticate/validateToken'),require('./updateVendor'))
+vendorRoute.use('/saveVendor',require('../authenticate/validateToken'),require('./saveVendor'))
+vendorRoute.use('/deleteVendor',require('../authenticate/validateToken'),require('./deleteVendor'))
 
 vendorRoute.use('/',(req,res,next) => 
 {
