@@ -4,6 +4,7 @@ let commondb = require('../commonFunction/dbQueryCommonFuntion')
 let errorCode = require('../errorCode/errorCode')
 let getCode = new errorCode()
 let name;
+let code;
 let createdOn;
 let createdById;
 let accessToken;
@@ -11,7 +12,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 {
     try
     {
-        if(!req.body.name)
+        if(!req.body.name || !req.body.code)
         {
             res.status(400)
             return res.json({
@@ -21,6 +22,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         name = req.body.name;
+        code = req.body.code;
         accessToken = req.body.accessToken;
         let identifierName = 'country'
         let id = 0
@@ -29,13 +31,25 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         {
             "name" : name
         }
+        let uniqueCheckCode = await uniqueFunction.unquieName(identifierName,['code'],  {
+            "code" : code
+        }, id, 0)
+        if(uniqueCheckCode != 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "Country Code Already Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
         let uniqueCheck = await uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0)
         if(uniqueCheck == 0)
         {
             createdOn = new Date()
             authData = await commondb.selectToken(accessToken)
             createdById = authData[0].userId
-            let saveCountry = await db.saveCountry(name, createdOn, createdById)
+            let saveCountry = await db.saveCountry(code ,name, createdOn, createdById)
             if(saveCountry.affectedRows > 0)
             {
                 res.status(200)

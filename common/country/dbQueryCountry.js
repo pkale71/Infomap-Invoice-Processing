@@ -1,14 +1,14 @@
 let pool = require('../../databaseConnection/createconnection')
 let db = {}
 
-db.saveCountry = (name, createdOn, createdById) => 
+db.saveCountry = (code, name, createdOn, createdById) => 
 {
     return new Promise((resolve, reject) => 
     {
         try
         {
-            let sql = `INSERT INTO country (name, created_on, created_by_id) VALUES (?,  ?, ?)`
-            pool.query(sql,[name, createdOn, createdById],(error, result) => 
+            let sql = `INSERT INTO country (code, name, created_on, created_by_id) VALUES (?, ?,  ?, ?)`
+            pool.query(sql,[code, name, createdOn, createdById],(error, result) => 
             {
                 if(error)
                 {
@@ -24,14 +24,14 @@ db.saveCountry = (name, createdOn, createdById) =>
     })
 }
 
-db.updateCountry = (name, modifyOn, modifyById, id) => 
+db.updateCountry = (code ,name, modifyOn, modifyById, id) => 
 {
     return new Promise((resolve, reject) => 
     {
         try
         {
-            let sql = `UPDATE country SET name = ?, modify_on = ?, modify_by_id = ? WHERE id = ?`
-            pool.query(sql,[name, modifyOn, modifyById, id],(error, result) => 
+            let sql = `UPDATE country SET code = ?, name = ?, modify_on = ?, modify_by_id = ? WHERE id = ?`
+            pool.query(sql,[code, name, modifyOn, modifyById, id],(error, result) => 
             {
                 if(error)
                 {
@@ -53,7 +53,7 @@ db.getCountries = () =>
     {
         try
         {
-            let sql = `SELECT id, name, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id 
+            let sql = `SELECT id, name, code, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id 
             FROM country
             ORDER BY name`
             pool.query(sql,(error, result) => 

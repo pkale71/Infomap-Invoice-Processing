@@ -78,7 +78,6 @@ function saveVendors(vendors, start, end, res, createdById, active, createUuid, 
 
     db.saveVendors(ele).then(unique => 
       {
-        console.log("unique", unique)
         if(unique)
         {
             if(unique.affectedRows > 0)
