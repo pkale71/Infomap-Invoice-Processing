@@ -1,12 +1,12 @@
 class vendor {
-    // uuid
-    // name
-    // code
-    // createdOn
-    // createdById
-    // modifyOn
-    // modifyById
-    // isActive
+    uuid
+    name
+    code
+    createdOn
+    createdById
+    modifyOn
+    modifyById
+    isActive
 
     code
     name
