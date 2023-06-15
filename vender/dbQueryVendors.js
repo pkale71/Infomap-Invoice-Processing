@@ -185,4 +185,29 @@ db.getReturnUuid = (id) =>
         }
     })
 }
+
+db.getClientId = (uuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT id
+            FROM client
+            WHERE uuid = '${uuid}')`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                { 
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
 module.exports = db

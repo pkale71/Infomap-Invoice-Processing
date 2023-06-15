@@ -17,12 +17,13 @@ let countryId;
 let stateId;
 let cityId;
 let plantTypeId;
+let clientUuid;
 let clientId;
 module.exports = require('express').Router().post('/',async(req,res) => 
 {
     try
     {
-        if(!req.body.code || !req.body.name || !req.body.address || !req.body.shortCode || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id) || !req.body.client || !parseInt(req.body.client?.id) || !req.body.plantType || !parseInt(req.body.plantType?.id) )
+        if(!req.body.code || !req.body.name || !req.body.address || !req.body.shortCode || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id) || !req.body.client || !parseInt(req.body.client?.uuid) || !req.body.plantType || !parseInt(req.body.plantType?.id) )
         {
             res.status(400)
             return res.json({
@@ -38,9 +39,20 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         countryId = req.body.country?.id
         stateId = req.body.state?.id
         cityId = req.body.city?.id
-        clientId = req.body.client?.id
+        clientUuid = req.body.client?.uuid
         plantTypeId = req.body.plantType?.id
         uuid = createUuid.v1()
+        clientId = await db.getClientId(clientUuid)
+        if(clientId.length == 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "Client Id Not Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
+        clientId = clientId[0].id
         accessToken = req.body.accessToken;
         let identifierName = 'plant'
         let id = 0

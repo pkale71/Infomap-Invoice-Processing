@@ -18,6 +18,7 @@ let panNumber;
 let msmeNumber;
 let isActive
 let clientId
+let clientUuid
 let email1
 let email2
 let email3
@@ -37,7 +38,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 {
     try
     {
-        if(!req.body.uuid || !req.body.code || !req.body.name || !req.body.addressLine1 || !req.body.email1 || !req.body.contact1 || !req.body.accountGroup || !req.body.corporateGroup || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id)|| !req.body.gstNumber || !req.body.panNumber || !req.body.industryType ||!req.body.msmeNumber || !req.body.client || !parseInt(req.body.client?.id) ||!req.body.postalCode)
+        if(!req.body.uuid || !req.body.code || !req.body.name || !req.body.addressLine1 || !req.body.email1 || !req.body.contact1 || !req.body.accountGroup || !req.body.corporateGroup || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id)|| !req.body.gstNumber || !req.body.panNumber || !req.body.industryType ||!req.body.msmeNumber || !req.body.client || !parseInt(req.body.client?.uuid) ||!req.body.postalCode)
         {
             res.status(400)
             return res.json({
@@ -58,7 +59,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         countryId = req.body.country?.id
         stateId = req.body.state?.id
         cityId = req.body.city?.id
-        clientId = req.body.client?.id
+        clientUuid = req.body.client?.uuid
         gstNumber = req.body.gstNumber
         panNumber = req.body.panNumber
         faxNumber = req.body.faxNumber
@@ -72,6 +73,17 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         industryType = req.body.industryType
         accountGroup = req.body.accountGroup
         accessToken = req.body.accessToken;
+        clientId = await db.getClientId(clientUuid)
+        if(clientId.length == 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "Client Id Not Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
+        clientId = clientId[0].id
         let identifierName = 'vendor'
         let id = 0
         let columnName = ['code']
