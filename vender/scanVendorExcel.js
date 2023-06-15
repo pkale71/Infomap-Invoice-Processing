@@ -10,6 +10,7 @@ const reader = require('xlsx');
 const { rejects } = require('assert');
 let headers = ['VENDOR NUMBER','NAME1', 'ACCOUNT_GROUP', 'STREET', 'STREET2', 'STREET3', 'STREET4', 'POSTAL CODE', 'CITY1', 'COUNTRY', 'Corporate Group', 'TELEPHONE NO. 1', 'TELEPHONE EXCHANGE', 'TELEPHONE NO. 2', 'FAX NUMBER 1', 'EMAIL ADDR1', 'EMAIL ADDR2', 'EMAIL ADDR3', 'GST No.', 'PAN NO', 'TYPE OF INDUSTRY']
 
+emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$/;
 
 module.exports = require('express').Router().post('/',async(req,res) =>
 {
@@ -83,9 +84,70 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                    
                     if(ele['NAME1'] != '' && ele['NAME1'] != null )
                     {
-                      // console.log("33333333333")
-                      values.push(ele['VENDOR NUMBER'].toString())
-                      vendorsList.push(ele)
+                      //  console.log(ele['EMAIL ADDR1'].match(emailpattern))
+                      //  console.log(emailpattern.test(ele['EMAIL ADDR1']))
+                      if(ele['EMAIL ADDR1'] != '' || ele['EMAIL ADDR1'] != null)
+                      {
+                        console.log(ele['EMAIL ADDR1'].match(emailpattern), emailpattern.test(ele['EMAIL ADDR1']))
+                        let check = ele['EMAIL ADDR1'].match(emailpattern)
+                        if(check != null && emailpattern.test(ele['EMAIL ADDR1']))
+                        {
+                          ele['EMAIL ADDR1'] = check[0]
+                          if(ele['EMAIL ADDR2'] != '' || ele['EMAIL ADDR2'] != '' || ele['EMAIL ADDR2'] != null || ele['EMAIL ADDR2'] != null )
+                          {
+                            let email2 = ele['EMAIL ADDR2'].match(emailpattern)
+                            let email3 = ele['EMAIL ADDR3'].match(emailpattern)
+                            if(email2 != null && emailpattern.test(ele['EMAIL ADDR2']))
+                            {
+                              ele['EMAIL ADDR2'] = check[0]
+                            }
+                            else
+                            {
+                              ele['REMARKS'] = `WRONG EMAIL ADDRESS`
+                              vendorSet.setScanFile(ele)
+                              rejected.push(vendorSet.getScanFile())
+                              return
+                            }
+                            if(email3 != null && emailpattern.test(ele['EMAIL ADDR3']))
+                            {
+                              ele['EMAIL ADDR3'] = check[0]
+                            }
+                            else
+                            {
+                              ele['REMARKS'] = `WRONG EMAIL ADDRESS`
+                              vendorSet.setScanFile(ele)
+                              rejected.push(vendorSet.getScanFile())
+                              return
+                            }
+                            if(email2 != null && email3 != null)
+                            {
+                              values.push(ele['VENDOR NUMBER'].toString())
+                              vendorsList.push(ele)
+                              return
+                            }
+                          }
+                          else
+                          {
+                            values.push(ele['VENDOR NUMBER'].toString())
+                            vendorsList.push(ele)
+                            return
+                          }
+                        }
+                        else
+                        {
+                          ele['REMARKS'] = `WRONG EMAIL ADDRESS`
+                          vendorSet.setScanFile(ele)
+                          rejected.push(vendorSet.getScanFile())
+                          return
+                        }
+                      }
+                      else
+                      {
+                        ele['REMARKS'] = `EMAIL IS EMPTY`
+                        vendorSet.setScanFile(ele)
+                        rejected.push(vendorSet.getScanFile())
+                        return
+                      }
                     }
                     else
                     {
@@ -94,6 +156,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                       ele['REMARKS'] = `NAME IS EMPTY`
                       vendorSet.setScanFile(ele)
                       rejected.push(vendorSet.getScanFile())
+                      return
                     }
                   }
                   else
@@ -103,6 +166,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                     ele['REMARKS'] = `DUPLICATE VENDOR NUMBER`
                       vendorSet.setScanFile(ele)
                       rejected.push(vendorSet.getScanFile())
+                      return
                   }
 
                 }
@@ -113,13 +177,12 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                   ele['REMARKS'] = `VENDOR NUMBER IS NULL`
                   vendorSet.setScanFile(ele)
                   rejected.push(vendorSet.getScanFile())
+                  return
                 }
             })
-
-
             console.log("999999999999999")
             let s = scanUniqueVendorCode(vendorsList, 0, values.length,accepted,rejected, res)
-            console.log(s)
+           // console.log(s)
             // const statusAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
             // const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex + 1});
             // reader.utils.sheet_add_aoa(worksheet, [['STATUS']], { origin: statusAddress });

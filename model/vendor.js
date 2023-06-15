@@ -1,11 +1,11 @@
 class vendor {
     uuid
-    name
-    code
+    msmeNumber
     createdOn
     createdById
     modifyOn
     modifyById
+    state
     isActive
 
     code

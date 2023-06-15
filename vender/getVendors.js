@@ -1,38 +1,38 @@
 let db = require('./dbQueryClient')
-let clientObj = require('../model/client')
-let client = new clientObj()
+let vendorObj = require('../model/vendor')
+let vendor = new vendorObj()
 let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
-let getClients;
-let clientMasterList = []
+let getVendors;
+let vendorList = []
 module.exports = require('express').Router().get('/',async(req,res) => 
 {
     try
     {
-        getClients = await db.getClients()
-        if(getClients.length == 0)
+        getVendors = await db.getVendors()
+        if(getVendors.length == 0)
         {
             res.status(200)
             return res.json({
                 "status_code" : 200,
                 "message"     : "success",
-                "data"        : {"clients" : []},
+                "data"        : {"vendors" : []},
                 "status_name" : getCode.getStatus(200)
             });
         }
         else
         {
-            clientMasterList = []
-            getClients.forEach((element) => 
+            vendorList = []
+            getVendors.forEach((element) => 
             {
-                client.setDataAll(element)
-                clientMasterList.push(client.getDataAll())
+                vendor.setDataAll(element)
+                vendorList.push(vendor.getDataAll())
             });
             res.status(200)
             return res.json({
                 "status_code" : 200,
                 "message"     : "success",
-                "data"        : {"clients" : clientMasterList},
+                "data"        : {"vendors" : vendorList},
                 "status_name" : getCode.getStatus(200)
             });
         }
