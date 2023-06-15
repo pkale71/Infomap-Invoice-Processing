@@ -4,6 +4,7 @@ let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 
 vendorRoute.use('/scanVendorExcel',require('../authenticate/validateToken'),require('./scanVendorExcel'))
+vendorRoute.use('/saveScanVendors',require('../authenticate/validateToken'),require('./saveScanVendors'))
 
 vendorRoute.use('/',(req,res,next) => 
 {

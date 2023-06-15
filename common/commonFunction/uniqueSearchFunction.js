@@ -62,4 +62,12 @@ uniqueFunction.unquieName = (identifierName, columnName, columnValue, id, uuid) 
         }
     })
 }
+
+uniqueFunction.manageSpecialCharacter = (data) => {
+    if(data.includes("'"))
+    {
+        data = data.split("'").join("''")
+    }
+    return data
+}
 module.exports = uniqueFunction
