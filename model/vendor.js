@@ -33,7 +33,7 @@ class vendor {
 
     constructor(){}
     
-    setDataAll(data)
+    setScanFile(data)
     {
         // 'VENDOR NUMBER','NAME1', 'ACCOUNT_GROUP', 'STREET', 'STREET2', 'STREET3', 'STREET4', 'POSTAL CODE', 'CITY1', 'COUNTRY', 'Corporate Group', 'TELEPHONE NO. 1', 'TELEPHONE EXCHANGE', 'TELEPHONE NO. 2', 'FAX NUMBER 1', 'EMAIL ADDR1', 'EMAIL ADDR2', 'EMAIL ADDR3', 'GST No.', 'PAN NO', 'TYPE OF INDUSTRY'
         this.code         =   data['VENDOR NUMBER']
@@ -60,7 +60,7 @@ class vendor {
         this.remarks        =   data['REMARKS']
     }
 
-    getDataAll()
+    getScanFile()
     {
         return {
             code    :   this.code,

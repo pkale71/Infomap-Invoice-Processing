@@ -92,8 +92,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                   // console.log("6666666666")
 
                       ele['REMARKS'] = `NAME IS EMPTY`
-                      vendorSet.setDataAll(ele)
-                      rejected.push(vendorSet.getDataAll())
+                      vendorSet.setScanFile(ele)
+                      rejected.push(vendorSet.getScanFile())
                     }
                   }
                   else
@@ -101,8 +101,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                   // console.log("777777777777777")
 
                     ele['REMARKS'] = `DUPLICATE VENDOR NUMBER`
-                      vendorSet.setDataAll(ele)
-                      rejected.push(vendorSet.getDataAll())
+                      vendorSet.setScanFile(ele)
+                      rejected.push(vendorSet.getScanFile())
                   }
 
                 }
@@ -111,8 +111,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                   //console.log("88888888888888")
 
                   ele['REMARKS'] = `VENDOR NUMBER IS NULL`
-                  vendorSet.setDataAll(ele)
-                  rejected.push(vendorSet.getDataAll())
+                  vendorSet.setScanFile(ele)
+                  rejected.push(vendorSet.getScanFile())
                 }
             })
 
@@ -174,16 +174,16 @@ function scanUniqueVendorCode(ele, start, end, accepted,rejected, res)
           if(unique == 0)
           {
           //console.log("444444444")
-          vendorSet.setDataAll(ele[start])
-          accepted.push(vendorSet.getDataAll())
+          vendorSet.setScanFile(ele[start])
+          accepted.push(vendorSet.getScanFile())
           }
           else if(unique == 1)
           {
          // console.log("55555555555")
 
          ele[start]['REMARKS'] = `DUPLICATE VENDOR NUMBER`
-          vendorSet.setDataAll(ele[start])
-          rejected.push(vendorSet.getDataAll())
+          vendorSet.setScanFile(ele[start])
+          rejected.push(vendorSet.getScanFile())
           }
           start++
          let v =  scanUniqueVendorCode(ele, start, end,accepted,rejected, res)

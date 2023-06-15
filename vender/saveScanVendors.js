@@ -86,7 +86,7 @@ function saveVendors(vendors, start, end, res, createdById, active, createUuid, 
             }
             else
             {
-                rejected.push(unique.code)
+                rejected.push(unique)
             }
             start++
             let v =  saveVendors(vendors, start, end, res,  createdById, active, createUuid, index, rejected)
@@ -102,7 +102,7 @@ function saveVendors(vendors, start, end, res, createdById, active, createUuid, 
     "message" : "success",
     "status_name" : getCode.getStatus(200),
     "data" : { "count" : index,
-                "rejectedVendorCodes" : rejected},
+                "failedVendors" : rejected},
     })
   }
 }
