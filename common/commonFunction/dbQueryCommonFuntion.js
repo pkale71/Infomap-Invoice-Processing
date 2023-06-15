@@ -7,7 +7,7 @@ db.getUnique = (sql) =>
     {
         try
         {
-           // console.log(sql)
+            //console.log(sql)
             pool.query(sql,(error, result) => 
             {
                 if(error)
