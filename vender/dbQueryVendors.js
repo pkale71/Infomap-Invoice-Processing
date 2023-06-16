@@ -194,7 +194,7 @@ db.getClientId = (uuid) =>
         {
             let sql = `SELECT id
             FROM client
-            WHERE uuid = '${uuid}')`
+            WHERE uuid = '${uuid}'`
             pool.query(sql,(error, result) => 
             {
                 if(error)
