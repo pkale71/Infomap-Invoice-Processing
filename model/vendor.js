@@ -160,10 +160,10 @@ class vendor {
             isActive    : this.isActive,
             accountGroup : this.accountGroup,
             addressLine1    :   this.addressLine1,
-            addressLine2    :   this.addressLine1,
-            addressLine3    :   this.addressLine2,
-            addressLine4    :   this.addressLine3,
-            postalCode  :   this.addressLine4,
+            addressLine2    :   this.addressLine2,
+            addressLine3    :   this.addressLine3,
+            addressLine4    :   this.addressLine4,
+            postalCode  :   this.postalCode,
             corporateGroup  :   this.corporateGroup,
             contact1    :   this.contact1,
             contact2    :   this.contact2,
@@ -172,7 +172,8 @@ class vendor {
             email1  :   this.email1,
             email2  :   this.email2,
             email3  :   this.email3,
-            industryType    :   this.industryType
+            industryType    :   this.industryType,
+            client        :   this.client,
         }
     }
 }
