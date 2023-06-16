@@ -38,7 +38,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 {
     try
     {
-        if(!req.body.uuid || !req.body.code || !req.body.name || !req.body.addressLine1 || !req.body.email1 || !req.body.contact1 || !req.body.accountGroup || !req.body.corporateGroup || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id)|| !req.body.gstNumber || !req.body.panNumber || !req.body.industryType ||!req.body.msmeNumber || !req.body.client || !req.body.client?.uuid ||!req.body.postalCode)
+        if(!req.body.code || !req.body.name || !req.body.addressLine1 || !req.body.email1 || !req.body.contact1 || !req.body.accountGroup || !req.body.corporateGroup || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id)|| !req.body.gstNumber || !req.body.panNumber || !req.body.industryType ||!req.body.msmeNumber || !req.body.client || !req.body.client?.uuid ||!req.body.postalCode)
         {
             res.status(400)
             return res.json({
