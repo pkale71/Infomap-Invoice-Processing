@@ -7,10 +7,9 @@ let errorCode = require('../common/errorCode/errorCode');
 let uniqueFunction = require('../common/commonFunction/uniqueSearchFunction')
 let getCode = new errorCode()
 const reader = require('xlsx');
-const { rejects } = require('assert');
 let headers = ['VENDOR NUMBER','NAME1', 'ACCOUNT_GROUP', 'STREET', 'STREET2', 'STREET3', 'STREET4', 'POSTAL CODE', 'CITY1', 'COUNTRY', 'Corporate Group', 'TELEPHONE NO. 1', 'TELEPHONE EXCHANGE', 'TELEPHONE NO. 2', 'FAX NUMBER 1', 'EMAIL ADDR1', 'EMAIL ADDR2', 'EMAIL ADDR3', 'GST No.', 'PAN NO', 'TYPE OF INDUSTRY']
 
-emailpattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$/;
+emailpattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; ///^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$/;
 
 module.exports = require('express').Router().post('/',async(req,res) =>
 {
@@ -97,11 +96,13 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 
                       if((ele['EMAIL ADDR1'] != '' && ele['EMAIL ADDR1'] != null)|| (ele['EMAIL ADDR2'] != '' && ele['EMAIL ADDR2'] != null) || ( ele['EMAIL ADDR2'] != '' && ele['EMAIL ADDR2'] != null))
                       {
-                        // console.log(ele['EMAIL ADDR1'].match(emailpattern), emailpattern.test(ele['EMAIL ADDR1']))
-                        let email1 = ele['EMAIL ADDR1']?.length > 5 ? ele['EMAIL ADDR1'].match(emailpattern) : '';
-                        let email2 = ele['EMAIL ADDR2']?.length > 5 ? ele['EMAIL ADDR2'].match(emailpattern) : ''
-                        let email3 = ele['EMAIL ADDR3']?.length > 5 ? ele['EMAIL ADDR3'].match(emailpattern) : ''
-                        
+                        //console.log(ele['EMAIL ADDR1'].match(emailpattern), emailpattern.test(ele['EMAIL ADDR1']))
+                        let email1 = ele['EMAIL ADDR1']?.length > 5 ? (ele['EMAIL ADDR1']).match(emailpattern) : '';
+                        let email2 = ele['EMAIL ADDR2']?.length > 5 ? (ele['EMAIL ADDR2']).match(emailpattern) : ''
+                        let email3 = ele['EMAIL ADDR3']?.length > 5 ? (ele['EMAIL ADDR3']).match(emailpattern) : ''
+
+                        // console.log("email1 ",email1, email1 != null, "email2", email2,email2 != null,"email3", email3, email3 != null, (ele['EMAIL ADDR3']?.length > 5 && email3 != null || ele['EMAIL ADDR3']?.length == 0 && email3 != null), (ele['EMAIL ADDR2']?.length > 5 && email2 != null || ele['EMAIL ADDR2']?.length == 0 && email2 != null), (ele['EMAIL ADDR1']?.length > 5 && email1 != 0 || ele['EMAIL ADDR1']?.length == 0 && email1 != null))
+
                         if(email1 == '' && email2 == '' && email3 == '')
                         {
                           values.push(ele['VENDOR NUMBER'].toString())
@@ -109,40 +110,41 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                           return
                         }
 
-                        if( ele['EMAIL ADDR1']?.length > 5 && email1 != null && emailpattern.test(ele['EMAIL ADDR1']))
+                        if( ele['EMAIL ADDR1']?.length > 5 && email1 != null && emailpattern.test(ele['EMAIL ADDR1'].toLowerCase()))
                         {
                           ele['EMAIL ADDR1'] = email1[0]
                         }
-                        else
-                        {
-                          ele['REMARKS'] = `WRONG EMAIL ADDRESS`
-                          vendorSet.setScanFile(ele)
-                          rejected.push(vendorSet.getScanFile())
-                          return
-                        }
-                        if( ele['EMAIL ADDR2']?.length > 5 && email2 != null && emailpattern.test(ele['EMAIL ADDR2']))
+                        // else
+                        // {
+                        //   ele['REMARKS'] = `WRONG EMAIL ADDRESS`
+                        //   vendorSet.setScanFile(ele)
+                        //   rejected.push(vendorSet.getScanFile())
+                        //   return
+                        // }
+                        if( ele['EMAIL ADDR2']?.length > 5 && email2 != null && emailpattern.test(ele['EMAIL ADDR2'].toLowerCase()))
                         {
                           ele['EMAIL ADDR2'] = email2[0]
                         }
-                        else
-                        {
-                          ele['REMARKS'] = `WRONG EMAIL ADDRESS`
-                          vendorSet.setScanFile(ele)
-                          rejected.push(vendorSet.getScanFile())
-                          return
-                        }
-                        if( ele['EMAIL ADDR3']?.length > 5 && email3 != null && emailpattern.test(ele['EMAIL ADDR3']))
+                        // else
+                        // {
+                        //   ele['REMARKS'] = `WRONG EMAIL ADDRESS`
+                        //   vendorSet.setScanFile(ele)
+                        //   rejected.push(vendorSet.getScanFile())
+                        //   return
+                        // }
+                        if( ele['EMAIL ADDR3']?.length > 5 && email3 != null && emailpattern.test(ele['EMAIL ADDR3'].toLowerCase()))
                         {
                           ele['EMAIL ADDR3'] = email3[0]
                         }
-                        else
-                        {
-                          ele['REMARKS'] = `WRONG EMAIL ADDRESS`
-                          vendorSet.setScanFile(ele)
-                          rejected.push(vendorSet.getScanFile())
-                          return
-                        }
-                        if((ele['EMAIL ADDR3']?.length > 5 && email3 != null) && (ele['EMAIL ADDR2']?.length > 5 && email2 != null) && (ele['EMAIL ADDR1']?.length > 5 && email1 != 0))
+                        // else
+                        // {
+                        //   ele['REMARKS'] = `WRONG EMAIL ADDRESS`
+                        //   vendorSet.setScanFile(ele)
+                        //   rejected.push(vendorSet.getScanFile())
+                        //   return
+                        // }
+
+                        if(((ele['EMAIL ADDR1']?.length > 5 && email1 != null || ele['EMAIL ADDR1']?.length == 0 && email1 != null)) && ((ele['EMAIL ADDR2']?.length > 5 && email2 != null || ele['EMAIL ADDR2']?.length == 0 && email2 != null)) && ((ele['EMAIL ADDR3']?.length > 5 && email3 != 0 || ele['EMAIL ADDR3']?.length == 0 && email3 != null)))
                         {
                           values.push(ele['VENDOR NUMBER'].toString())
                           vendorsList.push(ele)

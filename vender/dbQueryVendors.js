@@ -17,7 +17,7 @@ db.saveVendors = (ele) =>
             {
                 if(error)
                 {
-                    console.log(error.sqlMessage)
+                    console.log(error.sqlMessage, ele['code'])
                     ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
                     return resolve(ele);
                 }          
@@ -44,7 +44,7 @@ db.saveVendor = (uuid, code, name, addressLine1, addressLine2, addressLine3, add
             {
                 if(error)
                 {
-                    console.log(sql)
+                    //console.log(sql)
                     return reject(error);
                 }          
                 return resolve(result);
