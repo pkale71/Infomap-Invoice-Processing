@@ -3,6 +3,7 @@ class Plant {
     code
     name
     address
+    postalCode
     shortCode
     createdOn
     createdById
@@ -22,6 +23,7 @@ class Plant {
         this.code             =   data.code
         this.name           =   data.name
         this.address           =   data.address
+        this.postalCode           =   data.postal_code
         this.shortCode           =   data.short_code
         this.createdOn      =   data.created_on
         this.createdById    =   data.created_by_id
@@ -59,6 +61,7 @@ class Plant {
             code        :   this.code,
             name        :   this.name,
             address     :   this.address,
+            postalCode     :   this.postalCode,
             shortCode        :   this.shortCode,
             createdOn       :   this.createdOn,
             createdById     :   this.createdById,

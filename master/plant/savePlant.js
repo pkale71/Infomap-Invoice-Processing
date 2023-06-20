@@ -12,6 +12,7 @@ let uuid;
 let isActive;
 let name;
 let address;
+let postalCode;
 let shortCode;
 let countryId;
 let stateId;
@@ -23,7 +24,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
 {
     try
     {
-        if(!req.body.code || !req.body.name || !req.body.address || !req.body.shortCode || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id) || !req.body.client || !parseInt(req.body.client?.uuid) || !req.body.plantType || !parseInt(req.body.plantType?.id) )
+        if(!req.body.code || !req.body.name || !req.body.address || !req.body.postalCode || !req.body.shortCode || !req.body.country || !parseInt(req.body.country?.id) || !req.body.state || !parseInt(req.body.state?.id) || !req.body.city || !parseInt(req.body.city?.id) || !req.body.client || !(req.body.client?.uuid) || !req.body.plantType || !parseInt(req.body.plantType?.id) )
         {
             res.status(400)
             return res.json({
@@ -35,6 +36,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         code = req.body.code;
         name = req.body.name
         address = req.body.address
+        postalCode = req.body.postalCode
         shortCode = req.body.shortCode
         countryId = req.body.country?.id
         stateId = req.body.state?.id
@@ -90,7 +92,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             authData = await commondb.selectToken(accessToken)
             createdById = authData[0].userId
             isActive = 1
-            let savePlant = await db.savePlant(uuid, code, name, address, shortCode, clientId, plantTypeId, countryId, stateId, cityId, createdOn, createdById, isActive)
+            let savePlant = await db.savePlant(uuid, code, name, address, postalCode, shortCode, clientId, plantTypeId, countryId, stateId, cityId, createdOn, createdById, isActive)
             if(savePlant.affectedRows > 0)
             {
                 let returnUuid = await db.getReturnUuid(savePlant.insertId)
