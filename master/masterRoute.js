@@ -43,6 +43,7 @@ masterRoute.use('/savePlant',require('../authenticate/validateToken'),require('.
 masterRoute.use('/updatePlant',require('../authenticate/validateToken'),require('./plant/updatePlant'))
 masterRoute.use('/deletePlant',require('../authenticate/validateToken'),require('./plant/deletePlant'))
 masterRoute.use('/getPlants',require('../authenticate/validateToken'),require('./plant/getPlants'))
+masterRoute.use('/getUnmappedClients',require('../authenticate/validateToken'),require('./plant/getUnmappedClients'))
 
 masterRoute.use('/',(req,res,next) => 
 {
