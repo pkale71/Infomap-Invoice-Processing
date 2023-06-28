@@ -39,7 +39,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             const file1 = reader.readFile(fileObject.poFile.filepath)
             let data = []
           
-            const worksheet = file1.Sheets['PO template']
+            const worksheet = file1.Sheets['Sheet1']
             
             // const range = reader.utils.decode_range(worksheet['!ref']);
             // const column = reader.utils.decode_col("VENDOR NUMBER");
@@ -84,7 +84,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             amount = 0
             authData = await commondb.selectToken(accessToken)
 
-            const pos = reader.utils.sheet_to_json(file1.Sheets['PO template'])
+            const pos = reader.utils.sheet_to_json(file1.Sheets['Sheet1'])
             jsonWorksheet.forEach((ele, i) => {
               if(ele.length == 0)
               {
@@ -363,115 +363,6 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
   
 }
 
-function scanUniquePONumber(ele, start, end, accepted,rejected, res)
-{
-  
-  if(start < end)
-  {
-    let identifierName = 'po_master'
-    let id = 0
-    let columnName = ['po_number']
-    let columnValue = 
-    {
-        "po_number" : ele[start]['Purchasing Document']
-    }
-    uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0).then(unique => 
-      {
-        if(unique == 0 || unique == 1)
-        {
-
-          // console.log(unique)
-          if(unique == 0)
-          {
-          //console.log("444444444")
-          vendorSet.setScanFile(ele[start])
-          accepted.push(vendorSet.getScanFile())
-          }
-          else if(unique == 1)
-          {
-         // console.log("55555555555")
-
-         ele[start]['msg'] = ele[start]['msg'] + `DUPLICATE VENDOR NUMBER`
-          vendorSet.setScanFile(ele[start])
-          rejected.push(vendorSet.getScanFile())
-          const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-          reader.utils.sheet_add_aoa(worksheet, [[ele['msg']]], { origin: remarkAddress });
-          }
-          start++
-         let v =  scanUniqueVendorCode(ele, start, end,accepted,rejected, res)
-        }
-      }) 
-  }
-  else
-  {
-    console.log(new Date())
-    res.status(200)
-    return res.json({
-    "status_code" : 200,
-    "message" : "success",
-    "status_name" : getCode.getStatus(200),
-    "data"     :    {
-            "acceptedVendors" : accepted,
-            "rejectedVendors" : rejected
-          }
-    })
-  }
-
-}
-
-function scanUniquePOLineItems(ele, start, end, accepted,rejected, res)
-{
-  
-  if(start < end)
-  {
-    let identifierName = 'vendor'
-    let id = 0
-    let columnName = ['code']
-    let columnValue = 
-    {
-        "code" : ele[start]['VENDOR NUMBER']
-    }
-    uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0).then(unique => 
-      {
-        if(unique == 0 || unique == 1)
-        {
-
-          // console.log(unique)
-          if(unique == 0)
-          {
-          //console.log("444444444")
-          vendorSet.setScanFile(ele[start])
-          accepted.push(vendorSet.getScanFile())
-          }
-          else if(unique == 1)
-          {
-         // console.log("55555555555")
-
-         ele[start]['REMARKS'] = `DUPLICATE VENDOR NUMBER`
-          vendorSet.setScanFile(ele[start])
-          rejected.push(vendorSet.getScanFile())
-          }
-          start++
-         let v =  scanUniqueVendorCode(ele, start, end,accepted,rejected, res)
-        }
-      }) 
-  }
-  else
-  {
-    console.log(new Date())
-    res.status(200)
-    return res.json({
-    "status_code" : 200,
-    "message" : "success",
-    "status_name" : getCode.getStatus(200),
-    "data"     :    {
-            "acceptedVendors" : accepted,
-            "rejectedVendors" : rejected
-          }
-    })
-  }
-
-}
 
 function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
 {
