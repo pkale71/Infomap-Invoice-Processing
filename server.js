@@ -4,6 +4,7 @@ let cors = require('cors')
 let dotenv = require('dotenv')
 let errorCode = require('./common/errorCode/errorCode')
 let getCode = new errorCode()
+let https = require('https')
 let app = express()
 app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}))
@@ -14,6 +15,7 @@ app.use('/master',require('./master/masterRoute'))
 app.use('/client',require('./client/clientRoute'))
 app.use('/auth',require('./authenticate/authenticateRoute'))
 app.use('/vendor',require('./vender/vendorRoute'))
+app.use('/po',require('./PO/poRoute'))
 app.use('/',(req,res,next) =>
 {
     return res.status(400).json({
@@ -23,7 +25,7 @@ app.use('/',(req,res,next) =>
         "error"     : "Wrong method or api"
     }) 
 })
-
+// https.createServer(,app)
 app.listen(8082,() => 
 {
     console.log("Server is listing on port no 8082")
