@@ -17,6 +17,7 @@ let accessToken;
 emailpattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; ///^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$/;
 let filepath;
 let mimeType;
+let filename;
 
 module.exports = require('express').Router().post('/',async(req,res) =>
 {
@@ -34,8 +35,11 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 fileObject = file
             }
             req.body = fields
+            // console.log(fileObject)
             filepath = fileObject.poFile.filepath
             mimeType = fileObject.poFile.mimetype
+            filename = fileObject.poFile.originalFilename
+
             const file1 = reader.readFile(fileObject.poFile.filepath)
             let data = []
           
@@ -259,9 +263,24 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                           {
                             fileReturn = 1
                             index = pos.indexOf(ele)
-                            pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-                            const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-                            reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                            if(unique.remark.includes('cannot be null'))
+                            {
+                              let name  = unique.remark.substring(
+                                unique.remark.indexOf("'") + 1, 
+                                unique.remark.lastIndexOf("'")
+                                )
+                                
+                              let msg =  uniqueFunction.poDetailMaper(name)
+                              pos[index]['msg'] = pos[index]['msg'] + msg + `,`
+                              const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                              reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                            }
+                            else
+                            {
+                              pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
+                              const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                              reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                            }
                           }
                           start++
                           let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount)
@@ -342,9 +361,24 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
             {
               fileReturn = 1
               index = pos.indexOf(ele)
-              pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-              const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-              reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+              if(unique.remark.includes('cannot be null'))
+              {
+                let name  = unique.remark.substring(
+                  unique.remark.indexOf("'") + 1, 
+                  unique.remark.lastIndexOf("'")
+                  )
+                  
+                let msg =  uniqueFunction.poMasterMaper(name)
+                pos[index]['msg'] = pos[index]['msg'] + msg + `,`
+                const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+              }
+              else
+              {
+                pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
+                const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+              }
               posList = []
               poNumberList = []
               amount = 0
@@ -456,10 +490,10 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                   posList = []
                   poNumberList = []
                   fileReturn = 1
-                  index = pos.indexOf(pos[start])
-                  pos[index]['msg'] = pos[index]['msg'] + `Duplicate PO Number,`
-                  const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-                  reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                  //index = pos.indexOf(pos[start])
+                  pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
+                  const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+                  reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
                   start++
                   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
                 }
@@ -473,8 +507,8 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
     console.log(new Date())
     if(fileReturn == 1)
     {
-      reader.writeFile(file1, './newfile.xlsx') 
-      let xlsxFile = fs.readFileSync(filepath, 'base64')
+      reader.writeFile(file1, './'+filename) 
+      let xlsxFile = fs.readFileSync('./'+filename, 'base64')
       xlsxFile = `data:${mimeType};base64,` + xlsxFile
       res.status(200)
       return res.json({

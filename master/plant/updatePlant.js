@@ -54,6 +54,16 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             });
         }
         clientId = clientId[0].id
+        checkClientExist = await db.getClientExist(uuid, clientId)
+        if(checkClientExist[0].isExist > 0)
+        {
+            res.status(400)
+            return res.json({
+                "status_code" : 400,
+                "message"     : "Client Id Already Exist",
+                "status_name" : getCode.getStatus(400)
+            });
+        }
         accessToken = req.body.accessToken;
         let identifierName = 'plant'
         let id = 0

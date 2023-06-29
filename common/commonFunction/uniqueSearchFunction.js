@@ -70,4 +70,38 @@ uniqueFunction.manageSpecialCharacter = (data) => {
     }
     return data
 }
+
+uniqueFunction.poMasterMaper = (name) => 
+{
+    if (name) 
+    {
+        switch (name) 
+        {
+            case 'plant_id': return 'Plant Code Not Exist'; 
+            case 'vendor_id': return 'Plant Code Not Exist'; 
+            case 'material_group_id': return 'Material Group Code Not Exist'; 
+            case 'purchasing_group_id': return 'Purchasing Group Code Not Exist'; 
+            default:
+                return "Something Went Wrong in This Row"
+        }
+    }
+    
+}
+
+uniqueFunction.poDetailMaper = (name) => 
+{
+    if (name) 
+    {
+        switch (name) 
+        {
+            case 'sno': return 'Invalid Line ITEMS'; 
+            case 'activity_text': return 'Invalid Short Text'; 
+            case 'month_period': return 'Invalid Month or Period'; 
+            case 'gl_account_id': return 'G/L Account Code Not Exist'; 
+            default:
+                return "Something Went Wrong in This Row"
+        }
+    }
+    
+}
 module.exports = uniqueFunction

@@ -153,6 +153,29 @@ db.getClientId = (uuid) =>
     })
 }
 
+db.getClientExist = (uuid, clientId) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT COUNT(id) AS isExist FROM plant WHERE client_id = ${clientId} AND uuid != '${uuid}'`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                { 
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 db.getClients = () => 
 {
     return new Promise((resolve, reject) => 
