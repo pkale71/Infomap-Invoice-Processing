@@ -12,6 +12,7 @@ class PO {
     totalAmount
     isActive
     totalItems
+    poStatus
 
     constructor(){}
 
@@ -21,6 +22,10 @@ class PO {
         this.poNumber             =   data.po_number
         this.totalItems           =   data.totalItems
         this.totalAmount           =   data.total_amount
+        this.poStatus    =      {
+                                        "id" : data.poStatusId,
+                                        "name" : data.poStatusName
+                                }
         this.createdOn      =   data.created_on
         this.createdById    =   {
                                     "uuid" : data.createUuid,
@@ -69,6 +74,7 @@ class PO {
             modifyOn : this.modifyOn,
             modifyById : this.modifyById,
             totalAmount : this.totalAmount,
+            poStatus : this.poStatus,
             isActive : this.isActive,
             totalItems : this.totalItems
         }
