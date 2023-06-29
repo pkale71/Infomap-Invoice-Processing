@@ -228,7 +228,7 @@ db.getReturnUuid = (id) =>
     })
 }
 
-db.getPOs = () => 
+db.getPOs = (vendorUuid) => 
 {
     return new Promise((resolve, reject) => 
     {
@@ -248,7 +248,14 @@ db.getPOs = () =>
                                    LEFT JOIN user cb ON cb.id = pm.created_by_id
                                    LEFT JOIN user mb ON mb.id = pm.modify_by_id
                                    WHERE pm.is_active = 1
-                                   ORDER BY pm.created_on desc`
+                                   `
+
+            if(vendorUuid?.length > 4)
+            {
+                sql = sql + ` AND v.uuid = '${vendorUuid}'`
+            }
+
+            sql = sql + ` ORDER BY pm.created_on desc`
             pool.query(sql,(error, result) => 
             {
                 if(error)

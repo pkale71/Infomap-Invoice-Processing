@@ -5,11 +5,28 @@ let errorCode = require('../../common/errorCode/errorCode')
 let getCode = new errorCode()
 let getPOs;
 let poList = []
-module.exports = require('express').Router().get('/',async(req,res) => 
+let vendorUuid;
+module.exports = require('express').Router().get('/:vendorUuid?*',async(req,res) => 
 {
     try
     {
-        getPOs = await db.getPOs()
+        if(req.params['0'].length > 0 &&  req.params['0'] != '/')
+        {
+            let a = req.params['0'].split('/')
+            if(a.length > 1)
+            {
+                vendorUuid = req.params['vendorUuid'] + a[0]
+            }
+            else if(a.length == 1) 
+            {
+                vendorUuid = req.params['vendorUuid']+ a[0]
+            }
+        }
+        else
+        {
+            vendorUuid = req.params['vendorUuid']
+        }
+        getPOs = await db.getPOs(vendorUuid)
         if(getPOs.length == 0)
         {
             res.status(200)
