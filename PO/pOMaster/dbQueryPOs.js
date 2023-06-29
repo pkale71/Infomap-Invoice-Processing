@@ -228,4 +228,41 @@ db.getReturnUuid = (id) =>
     })
 }
 
+db.getPOs = () => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
+            pm.uuid, pm.po_number, pm.total_amount, (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS totalItems,
+             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on,
+                        pm.created_by_id, convert_tz(pm.modify_on,'+00:00','+05:30') AS modify_on, pm.modify_by_id, pm.is_active,
+                         pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
+                         p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, mb.fullname AS modifyName, mb.uuid AS modifyUuid 
+                                   FROM po_master pm
+                                   LEFT JOIN purchasing_group pg ON pg.id = pm.purchasing_group_id
+                                   LEFT JOIN vendor v ON v.id = pm.vendor_id
+                                   LEFT JOIN plant p ON p.id = pm.plant_id
+                                   LEFT JOIN material_group mg ON mg.id = pm.material_group_id
+                                   LEFT JOIN user cb ON cb.id = pm.created_by_id
+                                   LEFT JOIN user mb ON mb.id = pm.modify_by_id
+                                   WHERE pm.is_active = 1
+                                   ORDER BY pm.created_on desc`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 module.exports = db
