@@ -80,9 +80,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                     }) 
                 }
             })
-            const statusAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
-            const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex + 1});
-            reader.utils.sheet_add_aoa(worksheet, [['STATUS']], { origin: statusAddress });
+            const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
             reader.utils.sheet_add_aoa(worksheet, [['REMARKS']], { origin: remarkAddress });
           
            
@@ -154,7 +152,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
           //             ele['msg'] = ele['msg'] + `${element} can not be ${ele[element] == null ? 'null' : empty},`
           //           }
           //         })
-          //         const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+          //         const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
           //         reader.utils.sheet_add_aoa(worksheet, [[ele['msg']]], { origin: remarkAddress });
                   
           //         if(ele['msg'].length == 0)
@@ -219,7 +217,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
           //   // let s = scanUniqueVendorCode(vendorsList, 0, values.length,accepted,rejected, res)
           //  // console.log(s)
           //   // const statusAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
-          //   // const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex + 1});
+          //   // const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
           //   // reader.utils.sheet_add_aoa(worksheet, [['STATUS']], { origin: statusAddress });
           //   // reader.utils.sheet_add_aoa(worksheet, [['REMARKS']], { origin: remarkAddress });
 
@@ -296,13 +294,13 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                                 
                             //   let msg =  uniqueFunction.poDetailMaper(name)
                             //   pos[index]['msg'] = pos[index]['msg'] + msg + `,`
-                            //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                            //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
                             //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
                             // }
                             // else
                             // {
                               // pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-                              // const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                              // const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
                               // reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
                             
                           }
@@ -315,8 +313,15 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                 {
                   fileReturn = 1
                   index = pos.indexOf(ele)
-                  pos[index]['msg'] = pos[index]['msg'] + `Duplicate Line ITEMS,`
-                  const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                  if(pos[index]['msg'] == "")
+                  {
+                    pos[index]['msg'] = `Duplicate Line ITEMS`
+                  }
+                  else
+                  {
+                    pos[index]['msg'] = pos[index]['msg'] + ', ' + `Duplicate Line ITEMS`
+                  }
+                  const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
                   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
                   start++
                   savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
@@ -370,13 +375,13 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                                 
   //                           //   let msg =  uniqueFunction.poDetailMaper(name)
   //                           //   pos[index]['msg'] = pos[index]['msg'] + msg + `,`
-  //                           //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+  //                           //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
   //                           //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
   //                           // }
   //                           // else
   //                           // {
   //                           //   pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-  //                           //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+  //                           //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
   //                           //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
   //                           // }
   //                         }
@@ -391,7 +396,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                   
   //                 index = pos.indexOf(ele)
   //                 pos[index]['msg'] = pos[index]['msg'] + `Duplicate Line ITEMS,`
-  //                 const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+  //                 const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
   //                 reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
   //                 start++
   //                 savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
@@ -464,13 +469,13 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
                   
               //   let msg =  uniqueFunction.poMasterMaper(name)
               //   pos[index]['msg'] = pos[index]['msg'] + msg + `,`
-              //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+              //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
               //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
               // }
               // else
               // {
               //   pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-              //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+              //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
               //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
               // }
               posList = []
@@ -513,34 +518,62 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               if(ids1.vendorId?.length == 0)
               {
                 fileReturn = 1
-                pos[start]['msg'] = pos[start]['msg'] + `Vendor Code Not Exist,`
-                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                if(pos[start]['msg'] == "")
+                {
+                  pos[start]['msg'] = `Vendor Code Not Exist`
+                }
+                else
+                {
+                  pos[start]['msg'] = pos[start]['msg'] + ', ' + `Vendor Code Not Exist`
+                }
+                //pos[start]['msg'] = pos[start]['msg'] + `Vendor Code Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
                 reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
               }
               if(ids1.plantId?.length == 0)
               {
                 fileReturn = 1
-                pos[start]['msg'] = pos[start]['msg'] + `Plant Code Not Exist,`
-                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                if(pos[start]['msg'] == "")
+                {
+                  pos[start]['msg'] = `Plant Code Not Exist`
+                }
+                else
+                {
+                  pos[start]['msg'] = pos[start]['msg'] + ', ' + `Plant Code Not Exist`
+                }
+                //pos[start]['msg'] = pos[start]['msg'] + `Plant Code Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
                 reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
               }
               if(ids1.purchaseGroupId?.length == 0)
               {
                 fileReturn = 1
-                pos[start]['msg'] = pos[start]['msg'] + `Purchasing Group Code Not Exist,`
-                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                if(pos[start]['msg'] == "")
+                {
+                  pos[start]['msg'] = `Purchasing Group Code Not Exist`
+                }
+                else
+                {
+                  pos[start]['msg'] = pos[start]['msg'] + ', ' + `Purchasing Group Code Not Exist`
+                }
+                //pos[start]['msg'] = pos[start]['msg'] + `Purchasing Group Code Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
                 reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
               }
               if(ids1.glAccountId?.length == 0)
               {
                
                 fileReturn = 1
-                pos[start]['msg'] = pos[start]['msg'] + `Gl Account Number Not Exist,`
-                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
-                if(start == 166)
+                if(pos[start]['msg'] == "")
                 {
-                  console.log("glaccount",ids1, pos[start]['msg'], remarkAddress)
+                  pos[start]['msg'] = `Gl Account Number Not Exist`
                 }
+                else
+                {
+                  pos[start]['msg'] = pos[start]['msg'] + ', ' + `Gl Account Number Not Exist`
+                }
+                //pos[start]['msg'] = pos[start]['msg'] + `Gl Account Number Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
                 reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
               }
               headers.forEach((element, j) => {
@@ -551,23 +584,47 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                     if(element == 'Line ITEMS' && isNaN(parseInt(pos[start][element])) && isNumberObject(pos[start][element]))
                     {                        
                       fileReturn = 1
-                      pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
+                      if(pos[start]['msg'] == "")
+                      {
+                        pos[start]['msg'] = `${element} must be number`
+                      }
+                      else
+                      {
+                        pos[start]['msg'] = pos[start]['msg'] + ', ' + `${element} must be number`
+                      }
+                      //pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
                     }
     
                     if(element == 'Net Price' && isNaN(parseFloat(pos[start][element])))
                     {
                       fileReturn = 1
-                      pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
+                      if(pos[start]['msg'] == "")
+                      {
+                        pos[start]['msg'] = `${element} must be number`
+                      }
+                      else
+                      {
+                        pos[start]['msg'] = pos[start]['msg'] + ', ' + `${element} must be number`
+                      }
+                      //pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
                     }
                   }
                 }
                 if((pos[start][element] == null || pos[start][element] == '' || pos[start][element] == undefined) && element != 'Month or Period' )
                 {
                   fileReturn = 1
-                  pos[start]['msg'] = pos[start]['msg'] + `${element} can not be ${pos[start][element] == null ? 'null' : empty},`
+                  if(pos[start]['msg'] == "")
+                  {
+                    pos[start]['msg'] = `${element} can not be ${pos[start][element] == null ? 'null' : empty}`
+                  }
+                  else
+                  {
+                    pos[start]['msg'] = pos[start]['msg'] + ', ' + `${element} can not be ${pos[start][element] == null ? 'null' : empty}`
+                  }
+                  //pos[start]['msg'] = pos[start]['msg'] + `${element} can not be ${pos[start][element] == null ? 'null' : empty},`
                 }
               })
-              const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+              const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
               reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
               if(pos[start]['msg'].length == 0)
               {
@@ -582,8 +639,16 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                 else
                 {
                   fileReturn = 1
-                  pos[start]['msg'] = pos[start]['msg'] + `PO Number mismatch,`
-                  const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                  if(pos[start]['msg'] == "")
+                  {
+                    pos[start]['msg'] = `PO Number mismatch`
+                  }
+                  else
+                  {
+                    pos[start]['msg'] = pos[start]['msg'] + ', ' + `PO Number mismatch`
+                  }
+                  //pos[start]['msg'] = pos[start]['msg'] + `PO Number mismatch,`
+                  const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
                   reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress }); 
                 }
               }
@@ -606,24 +671,48 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               flag1 = 1
               fileReturn = 1
               //index = pos.indexOf(pos[start])
-              pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
-              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+              if(pos[start-1]['msg'] == "")
+              {
+                pos[start-1]['msg'] = `Purchasing Document Number Mismatch`
+              }
+              else
+              {
+                pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Purchasing Document Number Mismatch`
+              }
+              //pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
+              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
               reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
             }
             if(ele['Plant'] != posList[0]['Plant'])
             {
               flag1 = 1
               fileReturn = 1
-              pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
-              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+              if(pos[start-1]['msg'] == "")
+              {
+                pos[start-1]['msg'] = `Plant Code Mismatch`
+              }
+              else
+              {
+                pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Plant Code Mismatch`
+              }
+              //pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
+              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
               reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
             }
             if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
             {
               flag1 = 1
               fileReturn = 1
-              pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
-              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+              if(pos[start-1]['msg'] == "")
+              {
+                pos[start-1]['msg'] = `Purchasing Group Code Mismatch`
+              }
+              else
+              {
+                pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Purchasing Group Code Mismatch`
+              }
+              //pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
+              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
               reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
             }
             if(flag1 == 1)
@@ -655,8 +744,16 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                   poNumberList = []
                   fileReturn = 1
                   //index = pos.indexOf(pos[start])
-                  pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
-                  const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex + 1});
+                  if(pos[start-1]['msg'] == "")
+                  {
+                    pos[start-1]['msg'] = `Duplicate PO Number`
+                  }
+                  else
+                  {
+                    pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Duplicate PO Number`
+                  }
+                  //pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
+                  const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
                   reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
                   console.log(unique, remarkAddress)
 
@@ -683,21 +780,21 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
   //         fileReturn = 1
   //         //index = pos.indexOf(pos[start])
   //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
-  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
   //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
   //       }
   //       if(ele['Plant'] != posList[0]['Plant'])
   //       {
   //         fileReturn = 1
   //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
-  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
   //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
   //       }
   //       if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
   //       {
   //         fileReturn = 1
   //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
-  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
   //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
   //       }
   //     })
@@ -731,7 +828,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
   //             fileReturn = 1
   //             //index = pos.indexOf(pos[start])
   //             pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
-  //             const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex + 1});
+  //             const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
   //             reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
   //             start++
   //             scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
@@ -757,9 +854,10 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
       return res.json({
         "status_code" : 200,
         "message"     : "success",
+        "data"      : {"poFile" : xlsxFile,
         "savedPos"  : savedPos? savedPos : 0,
-        "totalPos"  : totalPos,
-        "data"      : {"poFile" : xlsxFile},
+        "totalPos"  : totalPos? totalPos : 0,
+        },
         "status_name" : getCode.getStatus(200)
     });
     }
@@ -769,9 +867,10 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
       return res.json({
         "status_code" : 200,
         "message"     : "success",
+        "data"      : {"poFile" : [],
         "savedPos"  : savedPos? savedPos : 0,
-        "totalPos"  : totalPos,
-        "data"      : {"poFile" : []},
+        "totalPos"  : totalPos? totalPos : 0
+        },
         "status_name" : getCode.getStatus(200)
     });
     }
