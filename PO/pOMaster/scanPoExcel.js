@@ -18,6 +18,8 @@ emailpattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; ///^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]
 let filepath;
 let mimeType;
 let filename;
+let totalPos = 0;
+let savedPos = 0;
 
 module.exports = require('express').Router().post('/',async(req,res) =>
 {
@@ -25,6 +27,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
     {
       console.log(new Date())
       fileReturn = 0;
+      totalPos = 0;
+      savedPos = 0;
         accessToken = req.body.accessToken;
         let form = new formidable.IncomingForm();
         form.parse(req, async function (error, fields, file) 
@@ -65,7 +69,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 }
                 if(!jsonWorksheet[0].includes(ele))
                 {
-                    console.log(ele)
+                    // console.log(ele)
                     headerFlag = 1
                     res.status(400)
                     return res.json({
@@ -81,14 +85,34 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             reader.utils.sheet_add_aoa(worksheet, [['STATUS']], { origin: statusAddress });
             reader.utils.sheet_add_aoa(worksheet, [['REMARKS']], { origin: remarkAddress });
           
-            let accepted = []
-            let rejected = []
+           
             let poNumberList = []
             let posList = []
             amount = 0
             authData = await commondb.selectToken(accessToken)
 
             const pos = reader.utils.sheet_to_json(file1.Sheets['Sheet1'])
+            // for(let i = 0; i < pos.length;)
+            // {
+            //   pos[i]['msg'] = ''
+            //   let o = getIds(pos[i]).then(ids=> {
+            //       console.log(ids)
+            //       if(ids)
+            //       {
+            //         pos[i]['ids'] = ids
+            //         console.log(" **********************    ",pos[i]['ids'])
+            //         i++;
+            //       }
+            //   })
+             
+            // }
+
+            // await pos.forEach(async(ele) => {
+            //   ele['msg'] = ''
+            //   ele['ids'] = await getIds(ele)
+            //   console.log(" **********************    ",ele['ids'])
+            // })
+          // totalPos =  pos.length
             jsonWorksheet.forEach((ele, i) => {
               if(ele.length == 0)
               {
@@ -96,7 +120,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
               }
             })
 
-          let scan =   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, 0, pos.length, res, lastCellIndex, poNumberList, file1,authData[0].userId, 1, createUuid, amount)
+          let scan =   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, 0, pos.length, res, lastCellIndex, poNumberList, file1,authData[0].userId, 1, createUuid, amount, savedPos, totalPos)
           console.log("scan ", scan)
 
           //   // let dupList =  findDuplicatesInColumn(pos);
@@ -227,7 +251,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
     }
 })
 // filData, 0, filData.length,file1, reader, worksheet, res
-function savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount)
+function savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
 {
   if(start < end)
   {
@@ -263,46 +287,119 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                           {
                             fileReturn = 1
                             index = pos.indexOf(ele)
-                            if(unique.remark.includes('cannot be null'))
-                            {
-                              let name  = unique.remark.substring(
-                                unique.remark.indexOf("'") + 1, 
-                                unique.remark.lastIndexOf("'")
-                                )
+                            // if(unique.remark.includes('cannot be null'))
+                            // {
+                            //   let name  = unique.remark.substring(
+                            //     unique.remark.indexOf("'") + 1, 
+                            //     unique.remark.lastIndexOf("'")
+                            //     )
                                 
-                              let msg =  uniqueFunction.poDetailMaper(name)
-                              pos[index]['msg'] = pos[index]['msg'] + msg + `,`
-                              const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-                              reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
-                            }
-                            else
-                            {
-                              pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-                              const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-                              reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
-                            }
+                            //   let msg =  uniqueFunction.poDetailMaper(name)
+                            //   pos[index]['msg'] = pos[index]['msg'] + msg + `,`
+                            //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                            //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                            // }
+                            // else
+                            // {
+                              // pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
+                              // const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+                              // reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                            
                           }
                           start++
-                          let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount)
+                          let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
                       }
                     }) 
                 }
                 else if(uniqueCheck == 1)
                 {
                   fileReturn = 1
-                  
                   index = pos.indexOf(ele)
                   pos[index]['msg'] = pos[index]['msg'] + `Duplicate Line ITEMS,`
                   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
                   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
                   start++
-                  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount)
+                  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
                 }
               }
     })
 
     
   }
+  // else if(start == end)
+  // {
+  //   console.log(posList.length, posList[start-1], start-1, end)
+  //   ele = posList[start-1]
+  //   ele['active'] = active
+  //   ele['uuid'] = createUuid.v1()
+  //   ele['createdById'] = createdById
+  //   ele['poId'] = poId
+  //   ele['createdOn'] = new Date()
+
+  //   let identifierName = 'po_detail'
+  //   let id = 0
+  //   let columnName = ['sno', 'po_master_id']
+  //   let columnValue = 
+  //   {
+  //       "po_master_id" : poId,
+  //       'sno' : ele['Line ITEMS']
+  //   }
+  //   uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0).then(uniqueCheck => {
+  //     if(uniqueCheck == 0 || uniqueCheck == 1)
+  //             {
+  //               if(uniqueCheck == 0)
+  //               {
+  //                 db.savePOs(ele).then(unique => 
+  //                   {
+  //                     if(unique)
+  //                     {
+  //                         if(unique.affectedRows > 0)
+  //                         {
+  //                             amount = amount +    ele['Net Price']
+  //                         }
+  //                         else
+  //                         {
+  //                           fileReturn = 1
+  //                           index = pos.indexOf(ele)
+  //                           // if(unique.remark.includes('cannot be null'))
+  //                           // {
+  //                           //   let name  = unique.remark.substring(
+  //                           //     unique.remark.indexOf("'") + 1, 
+  //                           //     unique.remark.lastIndexOf("'")
+  //                           //     )
+                                
+  //                           //   let msg =  uniqueFunction.poDetailMaper(name)
+  //                           //   pos[index]['msg'] = pos[index]['msg'] + msg + `,`
+  //                           //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+  //                           //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+  //                           // }
+  //                           // else
+  //                           // {
+  //                           //   pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
+  //                           //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+  //                           //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+  //                           // }
+  //                         }
+  //                         start++
+  //                         let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+  //                     }
+  //                   }) 
+  //               }
+  //               else if(uniqueCheck == 1)
+  //               {
+  //                 fileReturn = 1
+                  
+  //                 index = pos.indexOf(ele)
+  //                 pos[index]['msg'] = pos[index]['msg'] + `Duplicate Line ITEMS,`
+  //                 const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+  //                 reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+  //                 start++
+  //                 savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+  //               }
+  //             }
+  //   })
+
+  // }
   else
   {
     db.updatePOMasterAmount({poId : poId, amount : amount}).then(response => {
@@ -313,7 +410,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
         poNumberList = []
         amount = 0
         scanStart++
-        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount) 
+        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount, savedPos, totalPos) 
       }
       else
       {
@@ -321,7 +418,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
         poNumberList = []
         amount = 0
         scanStart++
-        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount) 
+        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount, savedPos, totalPos) 
       }
     })
     // console.log(new Date())
@@ -337,7 +434,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
   }
 }
 
-function savePOMaster(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, amount)
+function savePOMaster(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, amount, savedPos, totalPos)
 {
     ele = posList[start]
     ele['active'] = active
@@ -351,39 +448,36 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
         {
             if(unique.affectedRows > 0)
             {
-              savePOs(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, unique.insertId, amount)
-              // posList = []
-              // poNumberList = []
-              // scanStart++
-              // scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid)  
+              savedPos++
+              savePOs(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, unique.insertId, amount, savedPos, totalPos)
             }
             else
             {
               fileReturn = 1
               index = pos.indexOf(ele)
-              if(unique.remark.includes('cannot be null'))
-              {
-                let name  = unique.remark.substring(
-                  unique.remark.indexOf("'") + 1, 
-                  unique.remark.lastIndexOf("'")
-                  )
+              // if(unique.remark.includes('cannot be null'))
+              // {
+              //   let name  = unique.remark.substring(
+              //     unique.remark.indexOf("'") + 1, 
+              //     unique.remark.lastIndexOf("'")
+              //     )
                   
-                let msg =  uniqueFunction.poMasterMaper(name)
-                pos[index]['msg'] = pos[index]['msg'] + msg + `,`
-                const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-                reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
-              }
-              else
-              {
-                pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
-                const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
-                reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
-              }
+              //   let msg =  uniqueFunction.poMasterMaper(name)
+              //   pos[index]['msg'] = pos[index]['msg'] + msg + `,`
+              //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+              //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+              // }
+              // else
+              // {
+              //   pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
+              //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex + 1});
+              //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+              // }
               posList = []
               poNumberList = []
               amount = 0
               scanStart++
-              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
+              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
             }
             // else
             // {
@@ -398,70 +492,145 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
 }
 
 
-function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
+function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
 {
-  
   if(start < end)
   {
       if(Object.keys(pos[start]).length != 0)
         {
-          pos[start]['msg'] = ``
-          headers.forEach((element, j) => {
-            if( element == 'Line ITEMS' || element == 'Net Price')
-            {
-              if(pos[start][element] != '' || pos[start][element] != null || pos[start][element] != undefined)
-              {
-                if(element == 'Line ITEMS' && isNaN(parseInt(pos[start][element])) && isNumberObject(pos[start][element]))
-                {                        
-                  fileReturn = 1
-                  pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
-                }
+          // console.log("start",start,end)
 
-                if(element == 'Net Price' && isNaN(parseFloat(pos[start][element])))
+          pos[start]['msg'] = ``
+          let code = pos[start]['Name of Supplier'].split(" ")[0]
+          pos[start]['vendorCode'] = code
+          // console.log(start)
+          getIds(pos[start]).then(ids1 => {
+            // console.log("ids",ids1)
+            if(ids1)
+            {
+            //  console.log("id", ids1.vendorId?.length, start)
+              pos[start]['ids'] = ids1
+              if(ids1.vendorId?.length == 0)
+              {
+                fileReturn = 1
+                pos[start]['msg'] = pos[start]['msg'] + `Vendor Code Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              }
+              if(ids1.plantId?.length == 0)
+              {
+                fileReturn = 1
+                pos[start]['msg'] = pos[start]['msg'] + `Plant Code Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              }
+              if(ids1.purchaseGroupId?.length == 0)
+              {
+                fileReturn = 1
+                pos[start]['msg'] = pos[start]['msg'] + `Purchasing Group Code Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              }
+              if(ids1.glAccountId?.length == 0)
+              {
+               
+                fileReturn = 1
+                pos[start]['msg'] = pos[start]['msg'] + `Gl Account Number Not Exist,`
+                const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                if(start == 166)
+                {
+                  console.log("glaccount",ids1, pos[start]['msg'], remarkAddress)
+                }
+                reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              }
+              headers.forEach((element, j) => {
+                if( element == 'Line ITEMS' || element == 'Net Price')
+                {
+                  if(pos[start][element] != '' || pos[start][element] != null || pos[start][element] != undefined)
+                  {
+                    if(element == 'Line ITEMS' && isNaN(parseInt(pos[start][element])) && isNumberObject(pos[start][element]))
+                    {                        
+                      fileReturn = 1
+                      pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
+                    }
+    
+                    if(element == 'Net Price' && isNaN(parseFloat(pos[start][element])))
+                    {
+                      fileReturn = 1
+                      pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
+                    }
+                  }
+                }
+                if((pos[start][element] == null || pos[start][element] == '' || pos[start][element] == undefined) && element != 'Month or Period' )
                 {
                   fileReturn = 1
-                  pos[start]['msg'] = pos[start]['msg'] + `${element} must be number,`
+                  pos[start]['msg'] = pos[start]['msg'] + `${element} can not be ${pos[start][element] == null ? 'null' : empty},`
+                }
+              })
+              const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              if(pos[start]['msg'].length == 0)
+              {
+                if(poNumberList?.length == 0)
+                {
+                  poNumberList.push(pos[start]['Purchasing Document'])     
+                }
+                if(poNumberList?.length > 0 && poNumberList.includes(pos[start]['Purchasing Document']))
+                {
+                  posList.push(pos[start])
+                }
+                else
+                {
+                  fileReturn = 1
+                  pos[start]['msg'] = pos[start]['msg'] + `PO Number mismatch,`
+                  const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
+                  reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress }); 
                 }
               }
-            }
-            if((pos[start][element] == null || pos[start][element] == '' || pos[start][element] == undefined) && element != 'Month or Period' )
-            {
-              fileReturn = 1
-              pos[start]['msg'] = pos[start]['msg'] + `${element} can not be ${pos[start][element] == null ? 'null' : empty},`
+              start++
+              // console.log("cal", start, posList.length)
+              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
             }
           })
-          const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
-          reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
-          
-          if(pos[start]['msg'].length == 0)
-          {
-            let code = pos[start]['Name of Supplier'].split(" ")[0]
-            pos[start]['vendorCode'] = code
-            let flag = 0
-            if(poNumberList?.length == 0)
-            {
-              poNumberList.push(pos[start]['Purchasing Document'])
-            }
-            if(poNumberList?.length > 0 && poNumberList.includes(pos[start]['Purchasing Document']))
-            {
-              posList.push(pos[start])
-            }
-            else
-            {
-              fileReturn = 1
-              pos[start]['msg'] = pos[start]['msg'] + `PO Number mismatch,`
-              const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex + 1});
-              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress }); 
-            }
-          }
-          start++
-          scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
         }
       else
       {
+        totalPos++
         // console.log(start, "true", posList.length)
         if(posList.length > 0)
         {
+          posList.forEach((ele, i) => {
+            flag1 = 0
+            if(ele['Purchasing Document'] != posList[0]['Purchasing Document'])
+            {
+              flag1 = 1
+              fileReturn = 1
+              //index = pos.indexOf(pos[start])
+              pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
+              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+            }
+            if(ele['Plant'] != posList[0]['Plant'])
+            {
+              flag1 = 1
+              fileReturn = 1
+              pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
+              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+            }
+            if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
+            {
+              flag1 = 1
+              fileReturn = 1
+              pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
+              const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+            }
+            if(flag1 == 1)
+            {
+              posList.splice(1,1)
+            }
+          })
           let identifierName = 'po_master'
           let id = 0
           let columnName = ['po_number']
@@ -475,33 +644,107 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               {
                 if(unique == 0)
                 {
-                  let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount)
-                  // if(poMasterSave?.affectedRows > 0)
-                  // {
-                  //   posList = []
-                  //   poNumberList = []
-                  //   amount = 0
-                  //   start++
-                  //   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
-                  // }
+                  let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos)
+                
                 }
                 else if(unique == 1)
                 {
+                  
+                  
                   posList = []
                   poNumberList = []
                   fileReturn = 1
                   //index = pos.indexOf(pos[start])
                   pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
-                  const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
-                  reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+                  const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex + 1});
+                  reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
+                  console.log(unique, remarkAddress)
+
                   start++
-                  scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
+                  scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos)
                 }
               }
           }) 
         }
+        else
+        {
+          start++
+          scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+        }
       }
   }
+  // else if(start == end)
+  // {
+  //   if(posList.length > 0)
+  //   {
+  //     posList.forEach(ele => {
+  //       if(ele['Purchasing Document'] != posList[0]['Purchasing Document'])
+  //       {
+  //         fileReturn = 1
+  //         //index = pos.indexOf(pos[start])
+  //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
+  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+  //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+  //       }
+  //       if(ele['Plant'] != posList[0]['Plant'])
+  //       {
+  //         fileReturn = 1
+  //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
+  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+  //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+  //       }
+  //       if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
+  //       {
+  //         fileReturn = 1
+  //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
+  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex + 1});
+  //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+  //       }
+  //     })
+  //     let identifierName = 'po_master'
+  //     let id = 0
+  //     let columnName = ['po_number']
+  //     let columnValue = 
+  //     {
+  //         "po_number" : posList[0]['Purchasing Document']
+  //     }
+  //     uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0).then(unique => 
+  //       {
+  //         if(unique == 0 || unique == 1)
+  //         {
+  //           if(unique == 0)
+  //           {
+  //             let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos)
+  //             // if(poMasterSave?.affectedRows > 0)
+  //             // {
+  //             //   posList = []
+  //             //   poNumberList = []
+  //             //   amount = 0
+  //             //   start++
+  //             //   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
+  //             // }
+  //           }
+  //           else if(unique == 1)
+  //           {
+  //             posList = []
+  //             poNumberList = []
+  //             fileReturn = 1
+  //             //index = pos.indexOf(pos[start])
+  //             pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
+  //             const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex + 1});
+  //             reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
+  //             start++
+  //             scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+  //           }
+  //         }
+  //     }) 
+  //   }
+  //   else
+  //       {
+  //         start++
+  //         scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+  //       }
+  // }
   else
   {
     console.log(new Date())
@@ -514,6 +757,8 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
       return res.json({
         "status_code" : 200,
         "message"     : "success",
+        "savedPos"  : savedPos? savedPos : 0,
+        "totalPos"  : totalPos,
         "data"      : {"poFile" : xlsxFile},
         "status_name" : getCode.getStatus(200)
     });
@@ -524,10 +769,57 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
       return res.json({
         "status_code" : 200,
         "message"     : "success",
+        "savedPos"  : savedPos? savedPos : 0,
+        "totalPos"  : totalPos,
         "data"      : {"poFile" : []},
         "status_name" : getCode.getStatus(200)
     });
     }
   }
 
+}
+
+async function getIds(ele)
+{
+  // console.log("called")
+  return new Promise((resolve, reject) => {
+    // console.log("enter")
+    try{
+      db.getVendorId(ele.vendorCode).then(vendorId => {
+        // console.log("vender")
+        if(vendorId)
+        {
+          db.getPlantId(ele['Plant']).then(plantId => {
+        // console.log("plant")
+
+            if(plantId)
+            {
+              db.getPurchasingGroupId(ele['Purchasing Group']).then(purchaseGroupId => {
+        // console.log("group")
+
+                if(purchaseGroupId)
+                {
+                  db.getGlAccountId(ele['G/L Account']).then(glAccountId => {
+        // console.log("account")
+
+                    if(glAccountId)
+                    {
+                        // console.log("retun  ")
+                      resolve({vendorId : vendorId, plantId : plantId, purchaseGroupId : purchaseGroupId, glAccountId: glAccountId}) 
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+    catch(e)
+    {
+      console.log(e)
+      throw e
+    }
+  })
+  
 }

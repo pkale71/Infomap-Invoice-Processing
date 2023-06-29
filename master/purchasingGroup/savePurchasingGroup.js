@@ -26,16 +26,16 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         }
         description = req.body.description;
         uuid = createUuid.v1()
-        code = parseInt(req.body.code);
-        if(!code)
-        {
-            res.status(400)
-            return res.json({
-                "status_code" : 400,
-                "message"     : "Only number is accepted for code",
-                "status_name" : getCode.getStatus(400)
-            });
-        }
+        code = req.body.code;
+        // if(!code)
+        // {
+        //     res.status(400)
+        //     return res.json({
+        //         "status_code" : 400,
+        //         "message"     : "Only number is accepted for code",
+        //         "status_name" : getCode.getStatus(400)
+        //     });
+        // }
         // if(String(accountNumber).match(/\d/g).length)
         // {
             
