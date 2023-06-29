@@ -82,7 +82,6 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             })
             const statusAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
             const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex + 1});
-            reader.utils.sheet_add_aoa(worksheet, [['STATUS']], { origin: statusAddress });
             reader.utils.sheet_add_aoa(worksheet, [['REMARKS']], { origin: remarkAddress });
           
            
@@ -758,7 +757,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
         "status_code" : 200,
         "message"     : "success",
         "savedPos"  : savedPos? savedPos : 0,
-        "totalPos"  : totalPos,
+        "totalPos"  : totalPos? totalPos : 0,
         "data"      : {"poFile" : xlsxFile},
         "status_name" : getCode.getStatus(200)
     });
@@ -770,7 +769,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
         "status_code" : 200,
         "message"     : "success",
         "savedPos"  : savedPos? savedPos : 0,
-        "totalPos"  : totalPos,
+        "totalPos"  : totalPos? totalPos : 0,
         "data"      : {"poFile" : []},
         "status_name" : getCode.getStatus(200)
     });
