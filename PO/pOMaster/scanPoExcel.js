@@ -658,17 +658,23 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                 else
                 {
                   fileReturn = 1
-                  if(pos[start]['msg'] == "")
+                  index = pos.indexOf(pos[start])
+                  if(pos[index]['msg'] == "")
                   {
-                    pos[start]['msg'] = `PO Number mismatch`
+                    pos[index]['msg'] = `Purchasing Document mismatch`
                   }
                   else
                   {
-                    pos[start]['msg'] = pos[start]['msg'] + ', ' + `PO Number mismatch`
+                    pos[index]['msg'] = pos[index]['msg'] + ', ' + `Purchasing Document mismatch`
                   }
-                  //pos[start]['msg'] = pos[start]['msg'] + `PO Number mismatch,`
-                  const remarkAddress = reader.utils.encode_cell({ r: start + 1, c: lastCellIndex});
-                  reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress }); 
+                  //pos[start]['msg'] = pos[start]['msg'] + `Purchasing Document Number mismatch,`
+                  const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
+                  reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                  console.log(remarkAddress)
+                  // if(start == 1 || start == 2 || start == 3)
+                  // {
+                  //   console.log(start,pos[index], index)
+                  // } 
                 }
               }
               start++
@@ -700,7 +706,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               }
               //pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
               const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
-              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start - 1]['msg']]], { origin: remarkAddress });
             }
             if(ele['Plant'] != posList[0]['Plant'])
             {
@@ -716,7 +722,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               }
               //pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
               const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
-              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start -1]['msg']]], { origin: remarkAddress });
             }
             if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
             {
@@ -732,7 +738,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               }
               //pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
               const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
-              reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start - 1]['msg']]], { origin: remarkAddress });
             }
             if(flag1 == 1)
             {
@@ -757,27 +763,54 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                 }
                 else if(unique == 1)
                 {
-                  
-                  
+                  if(posList.length > 1)
+                  {
+                    posList.forEach((ele, i) => {
+                      fileReturn = 1
+                      index = pos.indexOf(ele)
+                      // console.log("** ",index, pos[index]['msg'], (pos[index]['msg'] == ""))
+
+                      if(pos[index]['msg'] == "")
+                      {
+                        pos[index]['msg'] = `Duplicate Purchasing Document Number`
+                      }
+                      else
+                      {
+                        pos[index]['msg'] = pos[index]['msg'] + ', ' + `Duplicate Purchasing Document Number`
+                      }
+                      //pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
+                      const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
+                      reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
+                      //  console.log(unique, remarkAddress)
+                    })
+                    
                   posList = []
                   poNumberList = []
-                  fileReturn = 1
-                  //index = pos.indexOf(pos[start])
-                  if(pos[start-1]['msg'] == "")
-                  {
-                    pos[start-1]['msg'] = `Duplicate PO Number`
+                  start++
+                  scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos, totalItems)
                   }
                   else
                   {
-                    pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Duplicate PO Number`
+                    posList = []
+                    poNumberList = []
+                    fileReturn = 1
+                    //index = pos.indexOf(pos[start])
+                    if(pos[start-1]['msg'] == "")
+                    {
+                      pos[start-1]['msg'] = `Duplicate Purchasing Document Number`
+                    }
+                    else
+                    {
+                      pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Duplicate Purchasing Document Number`
+                    }
+                    //pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
+                    const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
+                    reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
+                    console.log(unique, remarkAddress)
+  
+                    start++
+                    scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos, totalItems)
                   }
-                  //pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
-                  const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
-                  reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
-                  console.log(unique, remarkAddress)
-
-                  start++
-                  scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos, totalItems)
                 }
               }
           }) 
@@ -790,78 +823,111 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
         }
       }
   }
-  // else if(start == end)
-  // {
-  //   if(posList.length > 0)
-  //   {
-  //     posList.forEach(ele => {
-  //       if(ele['Purchasing Document'] != posList[0]['Purchasing Document'])
-  //       {
-  //         fileReturn = 1
-  //         //index = pos.indexOf(pos[start])
-  //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
-  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
-  //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
-  //       }
-  //       if(ele['Plant'] != posList[0]['Plant'])
-  //       {
-  //         fileReturn = 1
-  //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
-  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
-  //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
-  //       }
-  //       if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
-  //       {
-  //         fileReturn = 1
-  //         pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
-  //         const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
-  //         reader.utils.sheet_add_aoa(worksheet, [[pos[start]['msg']]], { origin: remarkAddress });
-  //       }
-  //     })
-  //     let identifierName = 'po_master'
-  //     let id = 0
-  //     let columnName = ['po_number']
-  //     let columnValue = 
-  //     {
-  //         "po_number" : posList[0]['Purchasing Document']
-  //     }
-  //     uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0).then(unique => 
-  //       {
-  //         if(unique == 0 || unique == 1)
-  //         {
-  //           if(unique == 0)
-  //           {
-  //             let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos, totalItems)
-  //             // if(poMasterSave?.affectedRows > 0)
-  //             // {
-  //             //   posList = []
-  //             //   poNumberList = []
-  //             //   amount = 0
-  //             //   start++
-  //             //   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, , savedPos, totalPos, totalItems)
-  //             // }
-  //           }
-  //           else if(unique == 1)
-  //           {
-  //             posList = []
-  //             poNumberList = []
-  //             fileReturn = 1
-  //             //index = pos.indexOf(pos[start])
-  //             pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
-  //             const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
-  //             reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
-  //             start++
-  //             scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
-  //           }
-  //         }
-  //     }) 
-  //   }
-  //   else
-  //       {
-  //         start++
-  //         scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
-  //       }
-  // }
+  else if(start == end)
+  {
+    totalPos++
+    if(posList.length > 0)
+    {
+      posList.forEach(ele => {
+        if(ele['Purchasing Document'] != posList[0]['Purchasing Document'])
+        {
+          fileReturn = 1
+          //index = pos.indexOf(pos[start])
+          if(pos[start-1]['msg'] == "")
+          {
+            pos[start-1]['msg'] = `Purchasing Document Number Mismatch`
+          }
+          else
+          {
+            pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Purchasing Document Number Mismatch`
+          }
+          // pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Document Number Mismatch,`
+          const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
+          reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
+        }
+        if(ele['Plant'] != posList[0]['Plant'])
+        {
+          fileReturn = 1
+          if(pos[start-1]['msg'] == "")
+          {
+            pos[start-1]['msg'] = `Plant Code Mismatch`
+          }
+          else
+          {
+            pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Plant Code Mismatch`
+          }
+          // pos[start-1]['msg'] = pos[start-1]['msg'] + `Plant Code Mismatch,`
+          const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
+          reader.utils.sheet_add_aoa(worksheet, [[pos[start - 1]['msg']]], { origin: remarkAddress });
+        }
+        if(ele['Purchasing Group'] != posList[0]['Purchasing Group'])
+        {
+          fileReturn = 1
+          if(pos[start-1]['msg'] == "")
+          {
+            pos[start-1]['msg'] = `Purchasing Group Code Mismatch`
+          }
+          else
+          {
+            pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Purchasing Group Code Mismatch`
+          }
+          // pos[start-1]['msg'] = pos[start-1]['msg'] + `Purchasing Group Code Mismatch,`
+          const remarkAddress = reader.utils.encode_cell({ r: start - 1, c: lastCellIndex});
+          reader.utils.sheet_add_aoa(worksheet, [[pos[start - 1]['msg']]], { origin: remarkAddress });
+        }
+      })
+      let identifierName = 'po_master'
+      let id = 0
+      let columnName = ['po_number']
+      let columnValue = 
+      {
+          "po_number" : posList[0]['Purchasing Document']
+      }
+      uniqueFunction.unquieName(identifierName, columnName, columnValue, id, 0).then(unique => 
+        {
+          if(unique == 0 || unique == 1)
+          {
+            if(unique == 0)
+            {
+              let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos, totalItems)
+              // if(poMasterSave?.affectedRows > 0)
+              // {
+              //   posList = []
+              //   poNumberList = []
+              //   amount = 0
+              //   start++
+              //   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, , savedPos, totalPos, totalItems)
+              // }
+            }
+            else if(unique == 1)
+            {
+              posList = []
+              poNumberList = []
+              fileReturn = 1
+              // index = pos.indexOf(pos[start-1])
+              if(pos[start-1]['msg'] == "")
+              {
+                pos[start-1]['msg'] = `Duplicate Purchasing Document Number`
+              }
+              else
+              {
+                pos[start-1]['msg'] = pos[start-1]['msg'] + ', ' + `Duplicate Purchasing Document Number`
+              }
+              //pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
+              const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
+              reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
+              start++
+              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
+            }
+          }
+      }) 
+    }
+    else
+        {
+          start++
+          scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
+        }
+  }
   else
   {
     console.log(new Date())
