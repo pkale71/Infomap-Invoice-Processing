@@ -441,7 +441,7 @@ db.updatePOMasterStatus = (uuid, status) =>
     {
         try
         {
-            let sql = `UPDATE po_master SET po_status_id = ${status}
+            let sql = `UPDATE po_master SET po_status_id = (SELECT id FROM po_status WHERE name = 'Processed')
             WHERE uuid = '${uuid}'`
 
             pool.query(sql, (error, result) => 
