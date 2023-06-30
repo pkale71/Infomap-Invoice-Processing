@@ -5,12 +5,12 @@ class PO {
     plant
     purchasingGroup
     materialGroup
-    createdById
+    createdBy
     createdOn
     processedOn
-    processedById
+    processedBy
     invoicedOn
-    invoicedById
+    invoicedBy
     totalAmount
     isActive
     totalItems
@@ -30,12 +30,12 @@ class PO {
                 "hsnSac"           :   data.hsn_sac,
                 "isInvoiced"           :   data.is_invoiced,
                 "createdOn  "    :   data.poCreate,
-                "createdById"    :   {
+                "createdBy"    :   {
                                             "uuid" : data.poCreateUuid,
                                             "fullName" : data.poCreateName
                 },
                 "modifyOn"       :   data.modify_on,
-                "modifyById"     :    {
+                "modifyBy"     :    {
                     "uuid" : data.modifyUuid,
                     "fullName" : data.modifyName
                 },
@@ -77,17 +77,17 @@ class PO {
                                         "name" : data.poStatusName
                                 }
         this.createdOn      =   data.created_on
-        this.createdById    =   {
+        this.createdBy    =   {
                                     "uuid" : data.createUuid,
                                     "fullName" : data.createName
         }
         this.processedOn       =   data.processed_on
-        this.processedById     =    {
+        this.processedBy     =    {
             "uuid" : data.processedUuid,
             "fullName" : data.processedName
         }
         this.invoicedOn       =   data.invoiced_on
-        this.invoicedById     =    {
+        this.invoicedBy     =    {
             "uuid" : data.invoicedUuid,
             "fullName" : data.invoicedName
         }
@@ -125,12 +125,12 @@ class PO {
             plant : this.plant,
             purchasingGroup : this.purchasingGroup,
             materialGroup : this.materialGroup ? this.materialGroup : null,
-            createdById : this.createdById,
+            createdBy : this.createdBy,
             createdOn : this.createdOn,
             processedOn : this.processedOn,
-            processedById : this.processedById,
+            processedBy : this.processedBy,
             invoicedOn : this.invoicedOn,
-            invoicedById : this.invoicedById,
+            invoicedBy : this.invoicedBy,
             totalAmount : this.totalAmount,
             poStatus : this.poStatus,
             isActive : this.isActive,
