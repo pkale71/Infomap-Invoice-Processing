@@ -5,6 +5,7 @@ let getCode = new errorCode()
 
 poRoute.use('/scanPOExcel',require('../authenticate/validateToken'),require('./pOMaster/scanPoExcel'))
 poRoute.use('/getPOs',require('../authenticate/validateToken'),require('./pOMaster/getPOs'))
+poRoute.use('/getPO',require('../authenticate/validateToken'),require('./pOMaster/getPO'))
 poRoute.use('/',(req,res,next) => 
 {
     return res.status(400).json({

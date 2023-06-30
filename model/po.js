@@ -16,8 +16,54 @@ class PO {
     totalItems
     savedItems
     poStatus
+    poDetails
 
     constructor(){}
+
+    setPO(data)
+    {
+        this.poDetails =    { 
+                "uuid"      :   data.poUuid,
+                "sno"          :   data.sno,
+                "activityText"          :   data.activity_text,
+                "monthPeriod"          :   data.month_period,
+                "hsnSac"           :   data.hsn_sac,
+                "isInvoiced"           :   data.is_invoiced,
+                "createdOn  "    :   data.poCreate,
+                "createdById"    :   {
+                                            "uuid" : data.poCreateUuid,
+                                            "fullName" : data.poCreateName
+                },
+                "modifyOn"       :   data.modify_on,
+                "modifyById"     :    {
+                    "uuid" : data.modifyUuid,
+                    "fullName" : data.modifyName
+                },
+                "glAccount"   :   {
+                                            "uuid" : data.glAccountUuid,
+                                            "accountNumber" : data.glAccountNumber,
+                                            "ledgerDescription" : data.ledger_description
+                                        },
+                "profitCenter"         :   {
+                                                        "uuid" : data.profitUuid,
+                                                        "code" : data.profitCode,
+                                                        "description" : data.profitDescription
+                                        },
+                "costCenter"         :   {
+                                        
+                                                "uuid" : data.costUuid,
+                                                "code" : data.costCode,
+                                                "description" : data.costDescription
+                                        },
+                "amount"    :   data.amount
+            }
+    }
+
+    getPO()
+    {
+        return this.poDetails
+    }
+
 
     setDataAll(data)
     {
@@ -67,6 +113,7 @@ class PO {
                                         "code" : data.materialCode,
                                         "description" : data.materialDescription
                                 }
+        this.poDetails       =   data.poDetails
     }
 
     getDataAll()
@@ -88,7 +135,8 @@ class PO {
             poStatus : this.poStatus,
             isActive : this.isActive,
             totalItems : this.totalItems,
-            savedItems : this.savedItems
+            savedItems : this.savedItems,
+            poDetails : this.poDetails
         }
     }
 }
