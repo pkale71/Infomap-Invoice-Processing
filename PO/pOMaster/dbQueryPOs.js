@@ -331,4 +331,133 @@ db.getPO = (poUuid) =>
     })
 }
 
+db.getPoMasterId = (uuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT id
+            FROM po_master
+            WHERE uuid = '${uuid}'`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                { 
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.savePO = (ele) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `INSERT into po_detail (sno, po_master_id, activity_text, month_period, amount, gl_account_id, is_invoiced, created_on, created_by_id, uuid, hsn_sac, profit_center_id, cost_center_id) VALUES ('${ele.sno}','${ele.poMasterId}', '${uniqueFunction.manageSpecialCharacter(ele.activityText)}','${ele.monthPeriod ? ele.monthPeriod : '' }', '${ele.amount}',(SELECT id FROM gl_account WHERE uuid = '${ele.glAccountUuid}'), 0, ?, '${ele.createdById}', '${ele.uuid}', '${ele.hsnSac}', (SELECT id FROM profit_center WHERE uuid = '${ele.profitCenter?.uuid}'), (SELECT id FROM cost_center WHERE uuid = '${ele.costCenter?.uuid}'))`
+
+            pool.query(sql, [ele.createdOn], (error, result) => 
+            {
+                if(error)
+                {
+                    console.log(error.sqlMessage)
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    return resolve(ele);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.updatePO = (ele) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `Update po_detail SET sno = '${ele.sno}' , po_master_id = '${ele.poMasterId}', activity_text = '${uniqueFunction.manageSpecialCharacter(ele.activityText)}', month_period = '${ele.monthPeriod ? ele.monthPeriod : '' }', amount = '${ele.amount}', gl_account_id = (SELECT id FROM gl_account WHERE uuid = '${ele.glAccountUuid}'), is_invoiced = 0, created_on = ?, created_by_id = '${ele.createdById}', hsn_sac = '${ele.hsnSac}', profit_center_id = (SELECT id FROM profit_center WHERE uuid = '${ele.profitCenter?.uuid}'), cost_center_id =  (SELECT id FROM cost_center WHERE uuid = '${ele.costCenter?.uuid}') 
+            WHERE uuid =  '${ele.uuid}';`
+
+            pool.query(sql, [ele.createdOn], (error, result) => 
+            {
+                if(error)
+                {
+                    console.log(error.sqlMessage)
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    return resolve(ele);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.updatePOMaster = (uuid, plantUuid, purchasingGroupUuid, materialGroupUuid, totalAmount, isActive, totalItems) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `UPDATE po_master SET is_active = ${isActive}, purchasing_group_id = (SELECT id FROM purchasing_group WHERE uuid = '${purchasingGroupUuid}'), plant_id = (SELECT id FROM plant WHERE uuid = '${plantUuid}'), total_amount = '${totalAmount}', total_items = '${totalItems}', material_group_id = (SELECT id FROM material_group WHERE uuid = '${materialGroupUuid}')
+            WHERE uuid = '${uuid}'`
+
+
+            pool.query(sql, (error, result) => 
+            {
+                if(error)
+                {
+                    return reject();
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.updatePOMasterStatus = (uuid, status) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `UPDATE po_master SET po_status_id = ${status}
+            WHERE uuid = '${uuid}'`
+
+            pool.query(sql, (error, result) => 
+            {
+                if(error)
+                {
+                    return reject();
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 module.exports = db

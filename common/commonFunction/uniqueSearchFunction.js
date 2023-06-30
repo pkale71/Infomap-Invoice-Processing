@@ -116,17 +116,17 @@ uniqueFunction.isProcessedPO = (id) =>
                 db.verifyPODetails(id).then(poDetails => {
                     if(poDetails[0].poExist == 0)
                     {
-                        return resolve(0)
+                        return resolve(1)
                     }
                     else
                     {
-                        return resolve(1)
+                        return resolve(0)
                     }
                 })
             }
             else
             {
-                return resolve(1)
+                return resolve(0)
             }
            })
         }
