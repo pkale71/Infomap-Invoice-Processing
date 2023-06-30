@@ -7,11 +7,14 @@ class PO {
     materialGroup
     createdById
     createdOn
-    modifyOn
-    modifyById
+    processedOn
+    processedById
+    invoicedOn
+    invoicedById
     totalAmount
     isActive
     totalItems
+    savedItems
     poStatus
 
     constructor(){}
@@ -21,6 +24,7 @@ class PO {
         this.uuid             =   data.uuid
         this.poNumber             =   data.po_number
         this.totalItems           =   data.totalItems
+        this.savedItems           =   data.savedItems
         this.totalAmount           =   data.total_amount
         this.poStatus    =      {
                                         "id" : data.poStatusId,
@@ -31,11 +35,16 @@ class PO {
                                     "uuid" : data.createUuid,
                                     "fullName" : data.createName
         }
-        this.modifyOn       =   data.modify_on
-        this.modifyById     =    {
-            "uuid" : data.modifyUuid,
-            "fullName" : data.modifyName
-}
+        this.processedOn       =   data.processed_on
+        this.processedById     =    {
+            "uuid" : data.processedUuid,
+            "fullName" : data.processedName
+        }
+        this.invoicedOn       =   data.invoiced_on
+        this.invoicedById     =    {
+            "uuid" : data.invoicedUuid,
+            "fullName" : data.invoicedName
+        }
         this.isActive = data.is_active
         this.vendor        =   {
                                     "uuid" : data.vendorUuid,
@@ -71,12 +80,15 @@ class PO {
             materialGroup : this.materialGroup ? this.materialGroup : null,
             createdById : this.createdById,
             createdOn : this.createdOn,
-            modifyOn : this.modifyOn,
-            modifyById : this.modifyById,
+            processedOn : this.processedOn,
+            processedById : this.processedById,
+            invoicedOn : this.invoicedOn,
+            invoicedById : this.invoicedById,
             totalAmount : this.totalAmount,
             poStatus : this.poStatus,
             isActive : this.isActive,
-            totalItems : this.totalItems
+            totalItems : this.totalItems,
+            savedItems : this.savedItems
         }
     }
 }

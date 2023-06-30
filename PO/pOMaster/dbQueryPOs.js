@@ -34,8 +34,9 @@ db.savePOMaster = (ele) =>
     {
         try
         {
-            let sql = `INSERT into po_master (po_number, vendor_id, is_active, purchasing_group_id, plant_id, po_status_id, created_on, created_by_id, uuid, total_amount) VALUES ('${ele['Purchasing Document']}', (SELECT id FROM vendor WHERE code = '${ele.vendorCode}'), ${ele.active}, (SELECT id FROM purchasing_group WHERE code = '${ele['Purchasing Group']}'), (SELECT id FROM plant WHERE code = '${ele['Plant']}'), 1, ?, '${ele.createdById}', '${ele.uuid}', 0)`
+            let sql = `INSERT into po_master (po_number, vendor_id, is_active, purchasing_group_id, plant_id, po_status_id, created_on, created_by_id, uuid, total_amount, total_items) VALUES ('${ele['Purchasing Document']}', (SELECT id FROM vendor WHERE code = '${ele.vendorCode}'), ${ele.active}, (SELECT id FROM purchasing_group WHERE code = '${ele['Purchasing Group']}'), (SELECT id FROM plant WHERE code = '${ele['Plant']}'), 1, ?, '${ele.createdById}', '${ele.uuid}', 0, ${ele.totalItems})`
 
+            
             pool.query(sql, [ele.createdOn], (error, result) => 
             {
                 if(error)
@@ -235,12 +236,12 @@ db.getPOs = (vendorUuid) =>
         try
         {
             let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
-            pm.uuid, pm.po_number, pm.total_amount, ps.id AS poStatusId, ps.name AS poStatusName, 
-            (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS totalItems,
+            pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 
+            (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
              convert_tz(pm.created_on,'+00:00','+05:30') AS created_on,
-                        pm.created_by_id, convert_tz(pm.modify_on,'+00:00','+05:30') AS modify_on, pm.modify_by_id, pm.is_active,
+                        pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id, convert_tz(pm.invoiced_on,'+00:00','+05:30') AS invoiced_on, pm.invoiced_by_id, pm.is_active,
                          pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
-                         p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, mb.fullname AS modifyName, mb.uuid AS modifyUuid 
+                         p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid, ib.fullname AS invoicedName, ib.uuid AS invoicedUuid 
                                    FROM po_master pm
                                    LEFT JOIN purchasing_group pg ON pg.id = pm.purchasing_group_id
                                    LEFT JOIN vendor v ON v.id = pm.vendor_id
@@ -248,7 +249,8 @@ db.getPOs = (vendorUuid) =>
                                    LEFT JOIN po_status ps ON ps.id = pm.po_status_id
                                    LEFT JOIN material_group mg ON mg.id = pm.material_group_id
                                    LEFT JOIN user cb ON cb.id = pm.created_by_id
-                                   LEFT JOIN user mb ON mb.id = pm.modify_by_id
+                                   LEFT JOIN user pb ON pb.id = pm.processed_by_id
+                                   LEFT JOIN user ib ON ib.id = pm.invoiced_by_id
                                    WHERE pm.is_active = 1
                                    `
 

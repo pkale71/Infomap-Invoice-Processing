@@ -20,6 +20,7 @@ let mimeType;
 let filename;
 let totalPos = 0;
 let savedPos = 0;
+let totalItems = 0;
 
 module.exports = require('express').Router().post('/',async(req,res) =>
 {
@@ -29,6 +30,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
       fileReturn = 0;
       totalPos = 0;
       savedPos = 0;
+      totalItems = 0;
         accessToken = req.body.accessToken;
         let form = new formidable.IncomingForm();
         form.parse(req, async function (error, fields, file) 
@@ -38,8 +40,18 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             {
                 fileObject = file
             }
+            else
+            {
+              res.status(400)
+              return res.json({
+                  "status_code" : 400,
+                  "message" : "File Not Found",
+                  "status_name" : getCode.getStatus(400),
+                 // "data"     :    fs.readFileSync(file.excel.filepath, 'base64')
+              }) 
+            }
             req.body = fields
-            // console.log(fileObject)
+            // console.log(file)
             filepath = fileObject.poFile.filepath
             mimeType = fileObject.poFile.mimetype
             filename = fileObject.poFile.originalFilename
@@ -118,7 +130,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
               }
             })
 
-          let scan =   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, 0, pos.length, res, lastCellIndex, poNumberList, file1,authData[0].userId, 1, createUuid, amount, savedPos, totalPos)
+          let scan =   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, 0, pos.length, res, lastCellIndex, poNumberList, file1,authData[0].userId, 1, createUuid, amount, savedPos, totalPos, totalItems)
           console.log("scan ", scan)
 
           //   // let dupList =  findDuplicatesInColumn(pos);
@@ -249,7 +261,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
     }
 })
 // filData, 0, filData.length,file1, reader, worksheet, res
-function savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+function savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos, totalItems)
 {
   if(start < end)
   {
@@ -305,7 +317,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                             
                           }
                           start++
-                          let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+                          let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos, totalItems)
                       }
                     }) 
                 }
@@ -324,7 +336,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
                   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
                   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
                   start++
-                  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+                  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos, totalItems)
                 }
               }
     })
@@ -386,7 +398,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
   //                           // }
   //                         }
   //                         start++
-  //                         let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+  //                         let v =  savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos, totalItems)
   //                     }
   //                   }) 
   //               }
@@ -399,7 +411,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
   //                 const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
   //                 reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
   //                 start++
-  //                 savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos)
+  //                 savePOs(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, poId, amount, savedPos, totalPos, totalItems)
   //               }
   //             }
   //   })
@@ -415,7 +427,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
         poNumberList = []
         amount = 0
         scanStart++
-        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount, savedPos, totalPos) 
+        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount, savedPos, totalPos, totalItems) 
       }
       else
       {
@@ -423,7 +435,7 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
         poNumberList = []
         amount = 0
         scanStart++
-        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount, savedPos, totalPos) 
+        scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid,amount, savedPos, totalPos, totalItems) 
       }
     })
     // console.log(new Date())
@@ -439,13 +451,14 @@ function savePOs(posList, start, end, res, createdById, active, createUuid,file1
   }
 }
 
-function savePOMaster(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, amount, savedPos, totalPos)
+function savePOMaster(posList, start, end, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, amount, savedPos, totalPos, totalItems)
 {
     ele = posList[start]
     ele['active'] = active
     ele['uuid'] = createUuid.v1()
     ele['createdById'] = createdById
     ele['createdOn'] = new Date()
+    ele['totalItems'] = totalItems
 
     db.savePOMaster(ele).then(unique => 
       {
@@ -453,8 +466,9 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
         {
             if(unique.affectedRows > 0)
             {
+              totalItems = 0;
               savedPos++
-              savePOs(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, unique.insertId, amount, savedPos, totalPos)
+              savePOs(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, scanStart, scanEnd, lastCellIndex, poNumberList, unique.insertId, amount, savedPos, totalPos, totalItems)
             }
             else
             {
@@ -478,11 +492,16 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
               //   const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
               //   reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
               // }
+
+              pos[index]['msg'] = pos[index]['msg'] + unique.remark + `,`
+                const remarkAddress = reader.utils.encode_cell({ r: index + 1, c: lastCellIndex});
+                reader.utils.sheet_add_aoa(worksheet, [[pos[index]['msg']]], { origin: remarkAddress });
               posList = []
               poNumberList = []
               amount = 0
+              totalItems = 0;
               scanStart++
-              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, scanStart, scanEnd, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
             }
             // else
             // {
@@ -497,14 +516,14 @@ function savePOMaster(posList, start, end, res, createdById, active, createUuid,
 }
 
 
-function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
 {
   if(start < end)
   {
       if(Object.keys(pos[start]).length != 0)
         {
           // console.log("start",start,end)
-
+          totalItems++
           pos[start]['msg'] = ``
           let code = pos[start]['Name of Supplier'].split(" ")[0]
           pos[start]['vendorCode'] = code
@@ -654,7 +673,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               }
               start++
               // console.log("cal", start, posList.length)
-              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+              scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
             }
           })
         }
@@ -733,7 +752,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               {
                 if(unique == 0)
                 {
-                  let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos)
+                  let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos, totalItems)
                 
                 }
                 else if(unique == 1)
@@ -758,15 +777,16 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                   console.log(unique, remarkAddress)
 
                   start++
-                  scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos)
+                  scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos, totalItems)
                 }
               }
           }) 
         }
         else
         {
+          totalItems = 0
           start++
-          scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+          scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
         }
       }
   }
@@ -811,14 +831,14 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
   //         {
   //           if(unique == 0)
   //           {
-  //             let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos)
+  //             let poMasterSave = savePOMaster(posList, 0, posList.length, res, createdById, active, createUuid,file1, reader, worksheet, pos,fileReturn,headers, start, end, lastCellIndex, poNumberList,amount, savedPos, totalPos, totalItems)
   //             // if(poMasterSave?.affectedRows > 0)
   //             // {
   //             //   posList = []
   //             //   poNumberList = []
   //             //   amount = 0
   //             //   start++
-  //             //   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount)
+  //             //   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, , savedPos, totalPos, totalItems)
   //             // }
   //           }
   //           else if(unique == 1)
@@ -831,7 +851,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
   //             const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
   //             reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
   //             start++
-  //             scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+  //             scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
   //           }
   //         }
   //     }) 
@@ -839,7 +859,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
   //   else
   //       {
   //         start++
-  //         scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos)
+  //         scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
   //       }
   // }
   else
