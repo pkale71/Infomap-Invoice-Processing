@@ -283,7 +283,7 @@ db.getPO = (poUuid) =>
         try
         {
             let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
-            pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 
+            pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 'Old' AS oper,
             (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
              convert_tz(pm.created_on,'+00:00','+05:30') AS created_on,
                         pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id,

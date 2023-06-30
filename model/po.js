@@ -55,7 +55,8 @@ class PO {
                                                 "code" : data.costCode,
                                                 "description" : data.costDescription
                                         },
-                "amount"    :   data.amount
+                "amount"    :   data.amount,
+                "oper"      :   data.oper
             }
     }
 

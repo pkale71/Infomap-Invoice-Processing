@@ -74,4 +74,60 @@ db.getUserById = (userId) =>
         }
     });
 };
+
+db.verifyPODetails = (id) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT COUNT(sno) AS poExist FROM po_detail 
+            WHERE ((sno IS NULL OR (sno = 0)) OR
+            (activity_text IS NULL OR activity_text = '') OR 
+            (month_period IS NULL OR month_period = '') OR (hsn_sac IS NULL OR hsn_sac = '') OR (gl_account_id IS NULL OR gl_account_id = 0) OR (profit_center_id IS NULL OR profit_center_id = 0) OR (cost_center_id IS NULL  OR cost_center_id  = 0) OR (amount IS NULL OR amount = 0))
+            AND po_master_id = ${id}`
+            pool.query(sql, (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.verifyPOMaster = (id) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT COUNT(po_number) AS posExist FROM po_master 
+            WHERE ((po_number IS NULL OR (po_number = '')) OR
+            (vendor_id IS NULL OR vendor_id = 0) OR 
+            (plant_id IS NULL OR plant_id = 0) OR (material_group_id IS NULL OR material_group_id = 0) OR 
+            (purchasing_group_id IS NULL OR purchasing_group_id = 0) OR (total_amount IS NULL OR total_amount = 0) OR
+            (is_active IS NULL  OR is_active  = 0))
+            AND id = ${id}`
+            pool.query(sql, (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
 module.exports = db

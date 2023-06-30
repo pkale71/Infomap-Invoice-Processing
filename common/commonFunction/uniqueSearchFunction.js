@@ -104,4 +104,37 @@ uniqueFunction.poDetailMaper = (name) =>
     }
     
 }
+
+uniqueFunction.isProcessedPO = (id) => 
+{
+    return new Promise((resolve, reject) => {
+        try
+        {
+           db.verifyPOMaster(id).then(poMaster => {
+            if(poMaster[0].posExist == 0)
+            {
+                db.verifyPODetails(id).then(poDetails => {
+                    if(poDetails[0].poExist == 0)
+                    {
+                        return resolve(0)
+                    }
+                    else
+                    {
+                        return resolve(1)
+                    }
+                })
+            }
+            else
+            {
+                return resolve(1)
+            }
+           })
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 module.exports = uniqueFunction
