@@ -388,10 +388,10 @@ db.updatePO = (ele) =>
     {
         try
         {
-            let sql = `Update po_detail SET sno = '${ele.sno}' , po_master_id = '${ele.poMasterId}', activity_text = '${uniqueFunction.manageSpecialCharacter(ele.activityText)}', month_period = '${ele.monthPeriod ? ele.monthPeriod : '' }', amount = '${ele.amount}', gl_account_id = (SELECT id FROM gl_account WHERE uuid = '${ele.glAccountUuid}'), is_invoiced = 0, created_on = ?, created_by_id = '${ele.createdById}', hsn_sac = '${ele.hsnSac}', profit_center_id = (SELECT id FROM profit_center WHERE uuid = '${ele.profitCenter?.uuid}'), cost_center_id =  (SELECT id FROM cost_center WHERE uuid = '${ele.costCenter?.uuid}') 
+            let sql = `Update po_detail SET sno = '${ele.sno}' , po_master_id = '${ele.poMasterId}', activity_text = '${uniqueFunction.manageSpecialCharacter(ele.activityText)}', month_period = '${ele.monthPeriod ? ele.monthPeriod : '' }', amount = '${ele.amount}', gl_account_id = (SELECT id FROM gl_account WHERE uuid = '${ele.glAccountUuid}'), is_invoiced = 0, modify_on = ?, modify_by_id = '${ele.modifyById}', hsn_sac = '${ele.hsnSac}', profit_center_id = (SELECT id FROM profit_center WHERE uuid = '${ele.profitCenter?.uuid}'), cost_center_id =  (SELECT id FROM cost_center WHERE uuid = '${ele.costCenter?.uuid}') 
             WHERE uuid =  '${ele.uuid}';`
 
-            pool.query(sql, [ele.createdOn], (error, result) => 
+            pool.query(sql, [ele.modifyOn], (error, result) => 
             {
                 if(error)
                 {
