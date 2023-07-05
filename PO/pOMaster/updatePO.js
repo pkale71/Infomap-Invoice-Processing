@@ -130,7 +130,8 @@ function savePOMasters(poDetails, start, end, uuid, plantUuid, purchasingGroupUu
                 uniqueFunction.isProcessedPO(poMasterId).then(verify => {
                     if(verify)
                     {
-                        db.updatePOMasterStatus(uuid, 2).then(status => {
+                        let processedOn = new Date()
+                        db.updatePOMasterStatus(uuid, processedOn, userId).then(status => {
                             if(status.affectedRows > 0)
                             {
                                 res.status(200)

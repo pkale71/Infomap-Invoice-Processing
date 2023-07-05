@@ -435,16 +435,15 @@ db.updatePOMaster = (uuid, plantUuid, purchasingGroupUuid, materialGroupUuid, to
     })
 }
 
-db.updatePOMasterStatus = (uuid, status) => 
+db.updatePOMasterStatus = (uuid, processedOn, processedById) => 
 {
     return new Promise((resolve, reject) => 
     {
         try
         {
-            let sql = `UPDATE po_master SET po_status_id = (SELECT id FROM po_status WHERE name = 'Processed')
+            let sql = `UPDATE po_master SET processed_on = ?, processed_by_id = ?, po_status_id = (SELECT id FROM po_status WHERE name = 'Processed')
             WHERE uuid = '${uuid}'`
-
-            pool.query(sql, (error, result) => 
+            pool.query(sql, [processedOn, processedById], (error, result) => 
             {
                 if(error)
                 {
