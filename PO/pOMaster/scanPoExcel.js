@@ -786,6 +786,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                     
                   posList = []
                   poNumberList = []
+                  totalItems = 0
                   start++
                   scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos, totalItems)
                   }
@@ -807,7 +808,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
                     const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
                     reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
                     console.log(unique, remarkAddress)
-  
+                    totalItems = 0
                     start++
                     scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount,savedPos, totalPos, totalItems)
                   }
@@ -821,6 +822,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
           start++
           scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
         }
+        
       }
   }
   else if(start == end)
@@ -916,6 +918,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
               //pos[start-1]['msg'] = pos[start-1]['msg'] + `Duplicate PO Number,`
               const remarkAddress = reader.utils.encode_cell({ r: start, c: lastCellIndex});
               reader.utils.sheet_add_aoa(worksheet, [[pos[start-1]['msg']]], { origin: remarkAddress });
+              totalItems = 0
               start++
               scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
             }
@@ -924,6 +927,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
     }
     else
         {
+          totalItems = 0
           start++
           scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end, res, lastCellIndex, poNumberList, file1,createdById, active, createUuid, amount, savedPos, totalPos, totalItems)
         }
