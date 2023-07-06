@@ -276,6 +276,47 @@ db.getPOs = (vendorUuid) =>
     })
 }
 
+db.getProcessedPOs = () => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
+            pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 
+            (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
+             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on, pm.po_file_name AS poFileName, 
+                        pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id, convert_tz(pm.invoiced_on,'+00:00','+05:30') AS invoiced_on, pm.invoiced_by_id, pm.is_active,
+                         pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
+                         p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid, ib.fullname AS invoicedName, ib.uuid AS invoicedUuid 
+                                   FROM po_master pm
+                                   LEFT JOIN purchasing_group pg ON pg.id = pm.purchasing_group_id
+                                   LEFT JOIN vendor v ON v.id = pm.vendor_id
+                                   LEFT JOIN plant p ON p.id = pm.plant_id
+                                   LEFT JOIN po_status ps ON ps.id = pm.po_status_id
+                                   LEFT JOIN material_group mg ON mg.id = pm.material_group_id
+                                   LEFT JOIN user cb ON cb.id = pm.created_by_id
+                                   LEFT JOIN user pb ON pb.id = pm.processed_by_id
+                                   LEFT JOIN user ib ON ib.id = pm.invoiced_by_id
+                                   WHERE pm.is_active = 1 AND pm.po_status_id = 2 AND pm.invoiced_on = null
+                                   `
+            sql = sql + ` ORDER BY pm.processed_on desc`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 db.getPO = (poUuid) => 
 {
     return new Promise((resolve, reject) => 
@@ -285,7 +326,7 @@ db.getPO = (poUuid) =>
             let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
             pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 'Old' AS oper,
             (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
-             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on,
+             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on, pm.po_file_name AS poFileName, 
                         pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id,
                         convert_tz(pm.invoiced_on,'+00:00','+05:30') AS invoiced_on, pm.invoiced_by_id, pm.is_active,
                          pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
