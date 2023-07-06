@@ -17,6 +17,7 @@ class PO {
     savedItems
     poStatus
     poDetails
+    poFileName
 
     constructor(){}
 
@@ -71,6 +72,7 @@ class PO {
         this.uuid             =   data.uuid
         this.poNumber             =   data.po_number
         this.totalItems           =   data.totalItems
+        this.poFileName              =   data.poFileName ? data.poFileName : ""
         this.savedItems           =   data.savedItems
         this.totalAmount           =   data.total_amount
         this.poStatus    =      {
@@ -136,6 +138,7 @@ class PO {
             poStatus : this.poStatus,
             isActive : this.isActive,
             totalItems : this.totalItems,
+            poFileName : this.poFileName,
             savedItems : this.savedItems,
             poDetails : this.poDetails
         }
