@@ -10,7 +10,7 @@ module.exports = require('express').Router().get('/',async(req,res) =>
 {
     try
     {
-        getProcessedPOs = await db.getProcessedPOs(vendorUuid)
+        getProcessedPOs = await db.getProcessedPOs()
         if(getProcessedPOs.length == 0)
         {
             res.status(200)
