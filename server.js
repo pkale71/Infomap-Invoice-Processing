@@ -16,6 +16,7 @@ app.use('/client',require('./client/clientRoute'))
 app.use('/auth',require('./authenticate/authenticateRoute'))
 app.use('/vendor',require('./vender/vendorRoute'))
 app.use('/po',require('./PO/poRoute'))
+app.use('/invoice',require('./invoiced/invoiceRoute'))
 app.use('/',(req,res,next) =>
 {
     return res.status(400).json({
