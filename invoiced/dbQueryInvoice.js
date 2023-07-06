@@ -216,4 +216,52 @@ db.getInvoices = (vendorUuid) =>
     })
 }
 
+db.getInvoice = (invoiceUuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT  v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
+            im.uuid, im.barcode, im.base_amount, im.invoice_number, im.invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active,
+            s.id AS invoiceStatusId, s.name AS invoiceStatusName, 
+            (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
+            convert_tz(im.created_on,'+00:00','+05:30') AS created_on,  
+            im.created_by_id, convert_tz(im.processed_on,'+00:00','+05:30') AS processed_on, im.processed_by_id,
+            cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid,
+                         id.uuid AS invoiceUuid, id.discount AS invoiceDiscount, id.cgst_amount, id.sgst_amount, id.igst_amount, 
+                         id.gross_amount, id.gst_rate, id.base_amount AS invoiceBaseAmount, 
+                         gm.tax_code, gm.description AS gstDescription, gm.uuid AS gstUuid,
+                         pm.uuid AS poMasterUuid, pm.po_number, 
+                         pd.uuid AS poDetailUuid, pd.sno, pd.month_period, pd.activity_text, pd.hsn_sac, 
+                         ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber
+                                   FROM invoice_detail id
+                                   LEFT JOIN gst_master gm ON gm.id = id.gst_master_id
+								   LEFT JOIN po_master pm ON pm.id = id.po_master_id
+                                   LEFT JOIN po_detail pd ON pd.id = id.po_detail_id
+                                   LEFT JOIN gl_account ga ON ga.id = pd.gl_account_id
+                                   LEFT JOIN invoice_master im ON im.id = id.invoice_id
+                                   LEFT JOIN vendor v ON v.id = pm.vendor_id
+                                   LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
+                                   LEFT JOIN user cb ON cb.id = im.created_by_id
+                                   LEFT JOIN user pb ON pb.id = im.processed_by_id
+                                   WHERE im.uuid = '${invoiceUuid}'
+                                   ORDER BY id.id
+                                   `
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 module.exports = db

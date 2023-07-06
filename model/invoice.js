@@ -19,49 +19,44 @@ class invoice {
 
     constructor(){}
 
-    setPO(data)
+    setInvoice(data)
     {
-        this.poDetails =    { 
-                "uuid"      :   data.poUuid,
-                "sno"          :   data.sno,
-                "activityText"          :   data.activity_text,
-                "monthPeriod"          :   data.month_period,
-                "hsnSac"           :   data.hsn_sac,
-                "isInvoiced"           :   data.is_invoiced,
-                "createdOn  "    :   data.poCreate,
-                "createdBy"    :   {
-                                            "uuid" : data.poCreateUuid,
-                                            "fullName" : data.poCreateName
+        this.invoiceDetails =    { 
+                "uuid"      :   data.invoiceUuid,
+                "baseAmount"          :   data.invoiceBaseAmount,
+                "gstRate"          :   data.gst_rate,
+                "sgstAmount"           :   data.sgst_amount,
+                "cgstAmount"           :   data.cgst_amount,
+                "igstAmount"           :   data.igst_amount,
+                "grossAmount"           :   data.gross_amount,
+                "discount"           :   data.invoiceDiscount,
+                "gstMaster"    :   {
+                                            "uuid" : data.gstUuid,
+                                            "description" : data.gstDescription,
+                                            "taxCode" : data.tax_code
                 },
-                "modifyOn"       :   data.modify_on,
-                "modifyBy"     :    {
-                    "uuid" : data.modifyUuid,
-                    "fullName" : data.modifyName
-                },
-                "glAccount"   :   {
-                                            "uuid" : data.glAccountUuid,
-                                            "accountNumber" : data.glAccountNumber,
-                                            "ledgerDescription" : data.ledger_description
-                                        },
-                "profitCenter"         :   {
-                                                        "uuid" : data.profitUuid,
-                                                        "code" : data.profitCode,
-                                                        "description" : data.profitDescription
-                                        },
-                "costCenter"         :   {
-                                        
-                                                "uuid" : data.costUuid,
-                                                "code" : data.costCode,
-                                                "description" : data.costDescription
-                                        },
-                "amount"    :   data.amount,
-                "oper"      :   data.oper
+                "poMaster"   :  {
+                                    "uuid" : data.poMasterUuid,
+                                    "poNumber" : data.po_number
+                                },
+                "poDetails" :    { 
+                    "uuid"      :   data.poDetailUuid,
+                    "sno"          :   data.sno,
+                    "activityText"          :   data.activity_text,
+                    "monthPeriod"          :   data.month_period,
+                    "hsnSac"           :   data.hsn_sac,
+                    "glAccount"   :   {
+                                                "uuid" : data.glAccountUuid,
+                                                "accountNumber" : data.glAccountNumber,
+                                                "ledgerDescription" : data.ledger_description
+                                            }
+                }
             }
     }
 
-    getPO()
+    getInvoice()
     {
-        return this.poDetails
+        return this.invoiceDetails
     }
 
     setDataAll(data)
