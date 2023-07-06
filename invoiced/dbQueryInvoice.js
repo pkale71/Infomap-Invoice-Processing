@@ -173,4 +173,47 @@ db.poStatusUpdate = (id, invoicedOn, invoicedById) =>
     })
 }
 
+db.getInvoices = (vendorUuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT  v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
+            im.uuid, im.barcode, im.base_amount, im.invoice_number, im.invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active,
+            s.id AS invoiceStatusId, s.name AS invoiceStatusName, 
+            (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
+             convert_tz(im.created_on,'+00:00','+05:30') AS created_on,  
+                        im.created_by_id, convert_tz(im.processed_on,'+00:00','+05:30') AS processed_on, im.processed_by_id,
+                        cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid
+                        FROM invoice_master im
+                                   LEFT JOIN vendor v ON v.id = im.vendor_id
+                                   LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
+                                   LEFT JOIN user cb ON cb.id = im.created_by_id
+                                   LEFT JOIN user pb ON pb.id = im.processed_by_id
+                                   WHERE im.is_active = 1
+                                   `
+
+            if(vendorUuid?.length > 4)
+            {
+                sql = sql + ` AND v.uuid = '${vendorUuid}'`
+            }
+
+            sql = sql + ` ORDER BY im.created_on desc`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 module.exports = db

@@ -4,6 +4,7 @@ let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 
 invoiceRoute.use('/saveInvoice',require('../authenticate/validateToken'),require('./saveInvoice'))
+invoiceRoute.use('/getInvoices',require('../authenticate/validateToken'),require('./getInvoices'))
 invoiceRoute.use('/',(req,res,next) => 
 {
     return res.status(400).json({
