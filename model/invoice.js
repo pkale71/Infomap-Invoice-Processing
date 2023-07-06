@@ -39,7 +39,7 @@ class invoice {
                                     "uuid" : data.poMasterUuid,
                                     "poNumber" : data.po_number
                                 },
-                "poDetails" :    { 
+                "poDetail" :    { 
                     "uuid"      :   data.poDetailUuid,
                     "sno"          :   data.sno,
                     "activityText"          :   data.activity_text,
