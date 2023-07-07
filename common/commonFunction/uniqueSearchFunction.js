@@ -1,4 +1,7 @@
 let db = require('./dbQueryCommonFuntion')
+let fs = require('fs');
+let path = require('path')
+const mime = require('mime');
 let uniqueFunction = {}
 
 uniqueFunction.unquieName = (identifierName, columnName, columnValue, id, uuid) => 
@@ -135,6 +138,130 @@ uniqueFunction.isProcessedPO = (id) =>
             throw e
         }
     })
+}
+
+uniqueFunction.singleFileUpload = (fileObject, destinationBaseFolder, fileName, addiFolder) =>
+{
+    return new Promise((resolve, reject)=>{
+        try{
+            let addiFolderCreated = 1
+            let newpath = destinationBaseFolder
+            if(addiFolder != '')
+            {
+                let folders = addiFolder.split('/')
+                let i = 0
+                for(; i < folders.length; i++)
+                {
+                    try 
+                    {
+                        if (!fs.existsSync(newpath + '/' + folders[i])) 
+                        {
+                            fs.mkdirSync(newpath + '/' + folders[i]);
+                            newpath = newpath + '/' + folders[i]
+                        }
+                        else
+                        {
+                            newpath = newpath + '/' + folders[i]
+                        }
+                    } 
+                    catch (err) 
+                    {
+                        console.error(err);
+                    }
+                }
+                if(parseInt(i) != folders.length)
+                {
+                    for( ; i < folders.length; i++)
+                    {
+                        try 
+                        {
+                            if (!fs.existsSync(folders[i])) 
+                            {
+                                fs.rmdirSync(folders[i]);
+                            }
+                        } 
+                        catch (err) 
+                        {
+                            console.error(err);
+                        }
+                    }
+                    addiFolderCreated = 0
+                }
+            }
+            if(addiFolderCreated == 1)
+            {
+                try
+                {
+                    let file = fileObject
+                        let filepath = file.poFile.filepath;
+                        newpath = newpath + '/';
+                        newpath += fileName;
+                        console.log(newpath,filepath)
+                        fs.copyFile(filepath, newpath, function (err) {
+                            if(err)
+                            {
+                                throw err 
+                            }
+                            fs.unlinkSync(filepath)
+                            return  resolve(true)
+                        });
+                }
+                catch(e)
+                {
+                    throw e
+                }
+            }
+        }
+        catch(e)
+        { 
+            console.log(e)
+        }
+    });
+}
+
+uniqueFunction.deleteUploadedFile = (destinationBaseFolder, fileName, addiFolder) =>
+{
+    return new Promise((resolve, reject)=>{
+        try{
+            let newpath = destinationBaseFolder
+            if(addiFolder != '')
+            {
+                let folders = addiFolder.split('/')
+                let i = 0
+                for(; i < folders.length; i++)
+                {
+                    try 
+                    {
+                        if (fs.existsSync(newpath + '/' + folders[i])) 
+                        {
+                            fs.unlinkSync(newpath + '/' + folders[i] + '/' + fileName)
+                            let dir = newpath + '/' + folders[i]
+                            fs.readdir(dir, (err, files) => {
+                                if(files.length == 0)
+                                {
+                                    fs.rmdirSync(dir);
+                                }
+                            });                            
+                            newpath = newpath + '/' + folders[i]
+                            return resolve(true)
+                        }
+                        else
+                        {
+                            return resolve("File not exist")
+                        }
+                    } 
+                    catch (err) 
+                    {
+                        console.error(err);
+                    }
+                }
+            }
+        }
+        catch(e)
+        { 
+            console.log(e)
+        }
+    });
 }
 
 module.exports = uniqueFunction

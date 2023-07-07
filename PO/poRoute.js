@@ -9,6 +9,7 @@ poRoute.use('/getPO',require('../authenticate/validateToken'),require('./pOMaste
 poRoute.use('/updatePO',require('../authenticate/validateToken'),require('./pOMaster/updatePO'))
 poRoute.use('/getProcessedPOs',require('../authenticate/validateToken'),require('./pOMaster/getProcessedPOs'))
 poRoute.use('/getNonInvoicedPODetails',require('../authenticate/validateToken'),require('./pOMaster/getNonInvoicedPODetails'))
+poRoute.use('/uploadPOFile',require('../authenticate/validateToken'),require('./pOMaster/uploadPOFile'))
 poRoute.use('/',(req,res,next) => 
 {
     return res.status(400).json({

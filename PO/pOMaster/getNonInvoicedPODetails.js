@@ -31,13 +31,13 @@ module.exports = require('express').Router().get('/:poUuid',async(req,res) =>
                 po.setPO(element)
                 poList.push(po.getPO())
             });
-            getNonInvoicedPODetails[0]['poDetails'] = poList
-            po.setDataAll(getNonInvoicedPODetails[0])
+            // getNonInvoicedPODetails[0]['poDetails'] = poList
+            // po.setDataAll(getNonInvoicedPODetails[0])
             res.status(200)
             return res.json({
                 "status_code" : 200,
                 "message"     : "success",
-                "data"        : {"nonInvoicedPODetails" : po.getDataAll()},
+                "data"        : {"nonInvoicedPODetails" : poList},
                 "status_name" : getCode.getStatus(200)
             });
         }
