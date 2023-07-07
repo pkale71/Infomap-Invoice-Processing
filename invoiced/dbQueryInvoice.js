@@ -341,4 +341,45 @@ db.updateInvoiceMaster = (uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, 
     })
 }
 
+db.checkStatus = (uuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+              let  sql = `SELECT is_active, created_on, verified_on, processed_on, invoice_status_id FROM invoice_master WHERE uuid = '${uuid}'`;
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e){ console.log(e)}
+        
+    });
+}
+
+db.changeStatus = (sql, date) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            pool.query(sql, [date], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e){ console.log(e)}
+        
+    });
+}
+
 module.exports = db
