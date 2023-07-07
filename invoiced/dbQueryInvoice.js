@@ -185,12 +185,14 @@ db.getInvoices = (vendorUuid) =>
             (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
              convert_tz(im.created_on,'+00:00','+05:30') AS created_on,  
                         im.created_by_id, convert_tz(im.processed_on,'+00:00','+05:30') AS processed_on, im.processed_by_id,
+                        convert_tz(im.verified_on,'+00:00','+05:30') AS verified_on, im.verified_by_id, vb.fullname AS verifiedName, vb.uuid AS verifiedUuid,
                         cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid
                         FROM invoice_master im
                                    LEFT JOIN vendor v ON v.id = im.vendor_id
                                    LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
                                    LEFT JOIN user cb ON cb.id = im.created_by_id
                                    LEFT JOIN user pb ON pb.id = im.processed_by_id
+                                   LEFT JOIN user vb ON vb.id = im.verified_by_id
                                    WHERE im.is_active = 1
                                    `
 
@@ -228,7 +230,8 @@ db.getInvoice = (invoiceUuid) =>
             (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
             convert_tz(im.created_on,'+00:00','+05:30') AS created_on,  
             im.created_by_id, convert_tz(im.processed_on,'+00:00','+05:30') AS processed_on, im.processed_by_id,
-            cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid,
+            convert_tz(im.verified_on,'+00:00','+05:30') AS verified_on, im.verified_by_id,
+            cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid, vb.fullname AS verifiedName, vb.uuid AS verifiedUuid,
                          id.uuid AS invoiceUuid, id.discount AS invoiceDiscount, id.cgst_amount, id.sgst_amount, id.igst_amount, 
                          id.gross_amount, id.gst_rate, id.base_amount AS invoiceBaseAmount, 
                          gm.tax_code, gm.description AS gstDescription, gm.uuid AS gstUuid,
@@ -245,10 +248,84 @@ db.getInvoice = (invoiceUuid) =>
                                    LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
                                    LEFT JOIN user cb ON cb.id = im.created_by_id
                                    LEFT JOIN user pb ON pb.id = im.processed_by_id
+                                   LEFT JOIN user vb ON vb.id = im.verified_by_id
                                    WHERE im.uuid = '${invoiceUuid}'
                                    ORDER BY id.id
                                    `
             pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.getIdAndStatus = (uuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT im.id, s.name
+            FROM invoice_master im
+            LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
+            WHERE im.uuid = '${uuid}'`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.deleteInvoiceDetails = (id) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `DELETE FROM invoice_detail WHERE invoice_id = ${id}`
+            pool.query(sql, (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.updateInvoiceMaster = (uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `UPDATE invoice_master SET barcode = '${barCode}', vendor_id = (SELECT id FROM vendor WHERE uuid = '${vendorUuid}'), invoice_number = '${invoiceNumber}', invoice_date = '${invoiceDate}', base_amount = '${baseAmount}', discount = '${discount}', gst_amount = '${gstAmount}', net_amount = '${netAmount}', is_active = '${isActive}', invoice_status_id = (SELECT id FROM invoice_status WHERE name = 'Registered') WHERE uuid = '${uuid}'`
+
+            pool.query(sql, (error, result) => 
             {
                 if(error)
                 {

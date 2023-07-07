@@ -12,6 +12,8 @@ class invoice {
     createdOn
     processedOn
     processedBy
+    verifiedOn
+    verifiedBy
     isActive
     totalItems
     invoiceStatus
@@ -84,6 +86,11 @@ class invoice {
             "uuid" : data.processedUuid,
             "fullName" : data.processedName
         }
+        this.verifiedOn       =   data.verified_on
+        this.verifiedBy     =    {
+            "uuid" : data.verifiedUuid,
+            "fullName" : data.verifiedName
+        }
         this.isActive = data.is_active
         this.vendor        =   {
                                     "uuid" : data.vendorUuid,
@@ -104,6 +111,8 @@ class invoice {
             baseAmount : this.baseAmount,
             createdBy : this.createdBy,
             createdOn : this.createdOn,
+            verifiedOn : this.verifiedOn,
+            verifiedBy : this.verifiedBy,
             processedOn : this.processedOn,
             processedBy : this.processedBy,
             gstAmount : this.gstAmount,
