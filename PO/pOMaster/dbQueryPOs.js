@@ -563,4 +563,25 @@ db.updatePOMasterFile = (poNumber, poFileName) =>
     })
 }
 
+db.getFileName = (uuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+              let  sql = `SELECT po_file_name AS fileName FROM po_master WHERE uuid = '${uuid}'`;
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e){ console.log(e)}
+        
+    });
+}
+
 module.exports = db

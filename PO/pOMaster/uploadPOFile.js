@@ -1,10 +1,6 @@
 let db = require('./dbQueryPOs')
-let commondb = require('../../common/commonFunction/dbQueryCommonFuntion')
-let createUuid = require('uuid')
 let formidable = require('formidable');
-let path = require('path')
 let uniqueFunction = require('../../common/commonFunction/uniqueSearchFunction')
-let fs = require('fs');
 let docPath = require('../../DOC_FOLDER_PATH/docPath')
 let getPath = new docPath()
 let errorCode = require('../../common/errorCode/errorCode');
@@ -21,7 +17,6 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         const options = {
             maxFiles: 1
         };
-        accessToken = req.body.accessToken;
         let form = new formidable.IncomingForm(options);
         form.parse(req, async function (error, fields, file) 
         {
@@ -59,7 +54,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             if(upload)
             {
                 let updated = await db.updatePOMasterFile(poNumber, originalFilename)
-                console.log(uploaded + " File uploaded successfully")
+                console.log(updated + " File uploaded successfully")
                 if(updated.affectedRows > 0)
                 {
                     res.status(200)

@@ -162,6 +162,9 @@ uniqueFunction.singleFileUpload = (fileObject, destinationBaseFolder, fileName, 
                         else
                         {
                             newpath = newpath + '/' + folders[i]
+                            fs.readdirSync(newpath).forEach(ele => {
+                                fs.unlinkSync(newpath + '/' + ele);
+                            })
                         }
                     } 
                     catch (err) 
@@ -248,6 +251,47 @@ uniqueFunction.deleteUploadedFile = (destinationBaseFolder, fileName, addiFolder
                         else
                         {
                             return resolve("File not exist")
+                        }
+                    } 
+                    catch (err) 
+                    {
+                        console.error(err);
+                    }
+                }
+            }
+        }
+        catch(e)
+        { 
+            console.log(e)
+        }
+    });
+}
+
+uniqueFunction.getFileUploadedPath = (destinationBaseFolder, fileName, addiFolder) =>
+{
+    return new Promise((resolve, reject)=>{
+        try{
+            let newpath = destinationBaseFolder
+            if(addiFolder != '')
+            {
+                let folders = addiFolder.split('/')
+                let i = 0
+                for(; i < folders.length; i++)
+                {
+                    try 
+                    {
+                        if (fs.existsSync(newpath + '/' + folders[i] + '/' + fileName)) 
+                        {
+                            let file = fs.readFileSync(newpath + '/' + folders[i] + '/' + fileName)
+                            newpath = newpath + '/' + folders[i] + '/' + fileName
+                            const mime_type = mime.getType(newpath)
+                            //file = `data:${mime_type};base64,` + file
+                            return resolve({path:newpath, mime : mime_type, fileName : fileName, file: file})
+                        }
+                        else
+                        {
+                            newpath = newpath + '/' + folders[i]
+                            return resolve("")
                         }
                     } 
                     catch (err) 
