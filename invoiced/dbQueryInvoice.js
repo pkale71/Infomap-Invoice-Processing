@@ -287,7 +287,7 @@ db.getInvoice = (invoiceUuid) =>
                          id.uuid AS invoiceUuid, id.discount AS invoiceDiscount, id.cgst_amount, id.sgst_amount, id.igst_amount, 
                          id.gross_amount, id.gst_rate, id.base_amount AS invoiceBaseAmount, tm.uuid AS tdsMasterUuid,  tm.rate AS tdsMasterRate, 
                          tm.tax_section AS tdsMasterTaxSection, tm.description AS tdsMasterDescription, id.invoice_payable_amount, id.with_tax_amount AS invoiceWithTaxAmount,  
-                         gm.tax_code, gm.description AS gstDescription, gm.uuid AS gstUuid,
+                         gm.tax_code, gm.description AS gstDescription, gm.cgst, gm.sgst, gm.igst, gm.ugst, gm.uuid AS gstUuid,
                          pm.uuid AS poMasterUuid, pm.po_number, 
                          pd.uuid AS poDetailUuid, pd.sno, pd.month_period, pd.activity_text, pd.hsn_sac, 
                          ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber
