@@ -115,6 +115,47 @@ db.getVendors = () =>
     })
 }
 
+db.getVendor = (vendorUuid, code) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, convert_tz(v.created_on,'+00:00','+05:30') AS created_on,
+            v.created_by_id, convert_tz(v.modify_on,'+00:00','+05:30') AS modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
+            v.address_line1, v.address_line2, v.address_line3, v.address_line4, v.contact1, v.contact2, v.email1, v.email2, v.email3, v.fax_number, v.industry_type, v.postal_code, v.telephone_exchange,
+                       co.id AS countryId, co.name AS countryName, co.code AS countryCode, s.id AS stateId, s.name AS stateName, cy.id AS cityId, cy.name AS cityName
+                       FROM vendor v
+                       LEFT JOIN country co ON co.id = v.country_id
+                       LEFT JOIN state s ON s.id = v.state_id
+                       LEFT JOIN city cy ON cy.id = v.city_id
+                       LEFT JOIN client c ON c.id = v.client_id
+                       WHERE v.is_active = 1 `
+                    
+            if(vendorUuid?.trim()?.length > 0)
+            {
+                sql = sql + ` AND v.uuid = '${vendorUuid}'`
+            }
+            else if(code)
+            {
+                sql = sql + `  AND v.code = '${code}'`
+            }
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 db.updateVendor = (uuid, name, addressLine1, addressLine2, addressLine3, addressLine4, email1, email2, email3, gstNumber, panNumber, faxNumber, msmeNumber, countryId, stateId, cityId, clientId, modifyOn, postalCode, corporateGroup, contact1, contact2, telephoneExchange, industryType, accountGroup, modifyById, isActive) => 
 {
     return new Promise((resolve, reject) => 

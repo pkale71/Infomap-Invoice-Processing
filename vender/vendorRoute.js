@@ -10,6 +10,7 @@ vendorRoute.use('/updateVendor',require('../authenticate/validateToken'),require
 vendorRoute.use('/saveVendor',require('../authenticate/validateToken'),require('./saveVendor'))
 vendorRoute.use('/deleteVendor',require('../authenticate/validateToken'),require('./deleteVendor'))
 vendorRoute.use('/getMappedVendors',require('../authenticate/validateToken'),require('./getMappedVendors'))
+vendorRoute.use('/getVendor',require('../authenticate/validateToken'),require('./getVendor'))
 
 vendorRoute.use('/',(req,res,next) => 
 {

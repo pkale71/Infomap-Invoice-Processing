@@ -276,7 +276,7 @@ db.getPOs = (vendorUuid) =>
     })
 }
 
-db.getProcessedPOs = () => 
+db.getProcessedPOs = (vendorUuid) => 
 {
     return new Promise((resolve, reject) => 
     {
@@ -298,8 +298,12 @@ db.getProcessedPOs = () =>
                                    LEFT JOIN user cb ON cb.id = pm.created_by_id
                                    LEFT JOIN user pb ON pb.id = pm.processed_by_id
                                    LEFT JOIN user ib ON ib.id = pm.invoiced_by_id
-                                   WHERE pm.is_active = 1 AND pm.po_status_id IN (SELECT id FROM po_status WHERE (name = 'Processed' OR  name = 'Partially-Invoiced'))
+                                   WHERE pm.is_active = 1 AND pm.po_status_id IN (SELECT id FROM po_status WHERE (name = 'Processed' OR  name = 'Partially-Invoiced')) 
                                    `
+            if(vendorUuid?.length > 4)
+            {
+                sql = sql + ` AND v.uuid = '${vendorUuid}'`
+            }
             sql = sql + ` ORDER BY pm.processed_on desc`
             pool.query(sql,(error, result) => 
             {

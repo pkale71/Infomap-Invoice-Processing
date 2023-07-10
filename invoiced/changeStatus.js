@@ -3,7 +3,6 @@ let commondb = require('../common/commonFunction/dbQueryCommonFuntion')
 let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 let uuid;
-let status;
 let accessToken;
 let userId;
 
