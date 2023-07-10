@@ -201,51 +201,77 @@ function updateInvoiceMasters(invoiceDetails, start, end,  uuid,vendorUuid, barC
     totalItems = 0
     let identifierName = 'invoice_master'
     let id = 0
-    let columnName = ['barcode']
-    let columnValue = 
-    {
-        "barcode" : barCode,
-    }
-    uniqueFunction.unquieName(identifierName, columnName, columnValue, id, uuid).then(uniqueCheck => 
-    {
-        if(uniqueCheck == 0 || uniqueCheck == 1 || (uniqueCheck == -1))
+    uniqueFunction.unquieName(identifierName, ['invoice_number'], {"invoice_number" : invoiceNumber}, id, uuid).then(uniqueInvoice => {
+        if(uniqueInvoice == 0 || uniqueInvoice == 1 || (uniqueInvoice == -1))
         {
-            if(uniqueCheck == 0)
+            if(uniqueInvoice == 0)
             {
-                db.updateInvoiceMaster(uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount).then(updateInvoiceMaster => {
-                if(updateInvoiceMaster)
+                let columnName = ['barcode']
+                let columnValue = 
                 {
-                    if(updateInvoiceMaster.affectedRows > 0)
-                    {
-                        saveInvoiceDetails(invoiceDetails, 0, invoiceDetails.length, uuid, vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
-                    }
-                    else
-                    {
-                        res.status(500)
-                        return res.json({
-                            "status_code" : 500,
-                            "message"     : "Invoice Master not saved",
-                            "status_name" : getCode.getStatus(500)
-                        });
-                    }
+                    "barcode" : barCode,
                 }
-                else
+                uniqueFunction.unquieName(identifierName, columnName, columnValue, id, uuid).then(uniqueCheck => 
+                {
+                    if(uniqueCheck == 0 || uniqueCheck == 1 || (uniqueCheck == -1))
                     {
-                        res.status(500)
-                        return res.json({
-                            "status_code" : 500,
-                            "message"     : "Invoice Master not saved",
-                            "status_name" : getCode.getStatus(500)
-                        });
+                        if(uniqueCheck == 0)
+                        {
+                            db.updateInvoiceMaster(uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount).then(updateInvoiceMaster => {
+                            if(updateInvoiceMaster)
+                            {
+                                if(updateInvoiceMaster.affectedRows > 0)
+                                {
+                                    saveInvoiceDetails(invoiceDetails, 0, invoiceDetails.length, uuid, vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
+                                }
+                                else
+                                {
+                                    res.status(500)
+                                    return res.json({
+                                        "status_code" : 500,
+                                        "message"     : "Invoice Master not saved",
+                                        "status_name" : getCode.getStatus(500)
+                                    });
+                                }
+                            }
+                            else
+                                {
+                                    res.status(500)
+                                    return res.json({
+                                        "status_code" : 500,
+                                        "message"     : "Invoice Master not saved",
+                                        "status_name" : getCode.getStatus(500)
+                                    });
+                                }
+                            })
+                        }
+                        else if(uniqueCheck == 1)
+                        {
+                            res.status(400)
+                            return res.json({
+                                "status_code" : 400,
+                                "message"     : "Bar code Already Exist",
+                                "status_name" : getCode.getStatus(400)
+                            });
+                        }
+                        else
+                        {
+                            res.status(500)
+                            return res.json({
+                                "status_code" : 500,
+                                "message"     : "Something went wrong",
+                                "status_name" : getCode.getStatus(500)
+                            });
+                        }
                     }
                 })
             }
-            else if(uniqueCheck == 1)
+            else if(uniqueInvoice == 1)
             {
                 res.status(400)
                 return res.json({
                     "status_code" : 400,
-                    "message"     : "Bar code Already Exist",
+                    "message"     : "Invoice Number Already Exist",
                     "status_name" : getCode.getStatus(400)
                 });
             }
