@@ -77,6 +77,36 @@ db.getTdsMasters = () =>
     })
 }
 
+db.getTdsInvoiceMasters = (glAccountUuid, gstMasterUuid) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, convert_tz(tm.created_on,'+00:00','+05:30') AS created_on, tm.created_by_id,
+            convert_tz(tm.modify_on,'+00:00','+05:30') AS modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
+            gm.uuid AS gstUuid, gm.tax_code, gm.description AS gstDescription
+                       FROM tds_master tm
+                       LEFT JOIN gl_account ga ON ga.id = tm.gl_account_id
+                       LEFT JOIN gst_master gm ON gm.id = tm.gst_master_id
+                       WHERE tm.is_active = 1 AND ga.uuid = '${glAccountUuid}' AND gm.uuid = '${gstMasterUuid}' 
+                       ORDER BY tm.id`
+            pool.query(sql,(error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 db.deleteTdsMaster = (uuid, isActive, modifyOn, modifyById) => 
 {
     return new Promise((resolve, reject) => 

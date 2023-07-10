@@ -39,6 +39,7 @@ masterRoute.use('/saveTDSMaster',require('../authenticate/validateToken'),requir
 masterRoute.use('/updateTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/updateTdsMaster'))
 masterRoute.use('/deleteTDSMaster',require('../authenticate/validateToken'),require('./tdsMaster/deleteTdsMaster'))
 masterRoute.use('/getTDSMasters',require('../authenticate/validateToken'),require('./tdsMaster/getTdsMasters'))
+masterRoute.use('/getInvoiceTDSMasters',require('../authenticate/validateToken'),require('./tdsMaster/getInvoiceTDSMasters'))
 masterRoute.use('/savePlant',require('../authenticate/validateToken'),require('./plant/savePlant'))
 masterRoute.use('/updatePlant',require('../authenticate/validateToken'),require('./plant/updatePlant'))
 masterRoute.use('/deletePlant',require('../authenticate/validateToken'),require('./plant/deletePlant'))
