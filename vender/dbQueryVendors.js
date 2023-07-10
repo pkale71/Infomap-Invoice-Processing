@@ -18,7 +18,7 @@ db.saveVendors = (ele) =>
                 if(error)
                 {
                     console.log(error.sqlMessage, ele['code'])
-                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went wrong';
                     return resolve(ele);
                 }          
                 return resolve(result);

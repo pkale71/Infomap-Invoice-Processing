@@ -4,7 +4,6 @@ let vendor = new vendorObj()
 let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 let getVendors;
-let vendorList = []
 let code;
 let vendorUuid;
 module.exports = require('express').Router().get('/:vendorUuid?*',async(req,res) => 
@@ -54,17 +53,15 @@ module.exports = require('express').Router().get('/:vendorUuid?*',async(req,res)
         }
         else
         {
-            vendorList = []
             getVendors.forEach((element) => 
             {
                 vendor.setDataAll(element)
-                vendorList.push(vendor.getDataAll())
             });
             res.status(200)
             return res.json({
                 "status_code" : 200,
                 "message"     : "success",
-                "data"        : {"vendor" : vendorList},
+                "data"        : {"vendor" : vendor.getDataAll()},
                 "status_name" : getCode.getStatus(200)
             });
         }

@@ -18,6 +18,12 @@ class invoice {
     totalItems
     invoiceStatus
     invoiceDetails
+    paymentTerms
+    postingDate
+    baseLineDate
+    currency
+    documentHeaderText
+    withTaxAmount
 
     constructor(){}
 
@@ -51,7 +57,16 @@ class invoice {
                                                 "uuid" : data.glAccountUuid,
                                                 "accountNumber" : data.glAccountNumber,
                                                 "ledgerDescription" : data.ledger_description
-                                            }
+                                            },
+                    "tdsMaster"   :   {
+                        "uuid" : data.tdsMasterUuid,
+                        "description" : data.tdsMasterDescription,
+                        "rate" : data.tdsMasterRate,
+                        "taxSection" : data.tdsMasterTaxSection
+                                            },
+                    "tdsRate" : data.tds_rate,
+                    "withTaxAmount" : data.invoiceWithTaxAmount,
+                    "invoicePayableAmount" : data.invoice_payable_amount
                 }
             }
     }
@@ -97,7 +112,13 @@ class invoice {
                                     "code" : data.vendorCode,
                                     "name" : data.vendorName
                                 }
-        this.invoiceDetails       =   data.invoiceDetails
+        this.invoiceDetails       =   data.invoiceDetails,
+        this.paymentTerms        =   data.payment_terms,
+        this.postingDate        =   data.posting_date,
+        this.baseLineDate        =   data.base_line_date,
+        this.currency            =   data.currency,
+        this.documentHeaderText  =   data.document_header_text,
+        this.withTaxAmount      =   data.with_tax_amount
     }
 
     getDataAll()
@@ -121,7 +142,13 @@ class invoice {
             invoiceStatus : this.invoiceStatus,
             isActive : this.isActive,
             totalItems : this.totalItems,
-            invoiceDetails : this.invoiceDetails
+            invoiceDetails : this.invoiceDetails,
+            paymentTerms : this.paymentTerms,
+            postingDate : this.postingDate,
+            baselineDate : this.baseLineDate,
+            currency : this.currency,
+            documentHeaderText : this.documentHeaderText,
+            withTaxAmount : this.withTaxAmount
         }
     }
 }

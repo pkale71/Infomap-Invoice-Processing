@@ -15,7 +15,7 @@ db.savePOs = (ele) =>
                 if(error)
                 {
                     console.log(error.sqlMessage)
-                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went wrong';
                     return resolve(ele);
                 }          
                 return resolve(result);
@@ -41,7 +41,7 @@ db.savePOMaster = (ele) =>
             {
                 if(error)
                 {
-                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went wrong';
                     return resolve(ele);
                 }          
                 return resolve(result);
@@ -66,7 +66,7 @@ db.updatePOMasterAmount = (ele) =>
             {
                 if(error)
                 {
-                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went wrong';
                     return resolve(ele);
                 }          
                 return resolve(result);
@@ -451,7 +451,7 @@ db.savePO = (ele) =>
                 if(error)
                 {
                     console.log(error.sqlMessage)
-                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went wrong';
                     return resolve(ele);
                 }          
                 return resolve(result);
@@ -478,7 +478,7 @@ db.updatePO = (ele) =>
                 if(error)
                 {
                     console.log(error.sqlMessage)
-                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went worng';
+                    ele['remark'] = error?.sqlMessage?.length > 2 ? error?.sqlMessage : 'Something went wrong';
                     return resolve(ele);
                 }          
                 return resolve(result);

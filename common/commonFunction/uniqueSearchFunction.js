@@ -140,6 +140,38 @@ uniqueFunction.isProcessedPO = (id) =>
     })
 }
 
+uniqueFunction.isProcessedInvoice = (id) => 
+{
+    return new Promise((resolve, reject) => {
+        try
+        {
+           db.verifyInvoiceMaster(id).then(invoiceMaster => {
+            if(invoiceMaster[0].invoiceExist == 0)
+            {
+                db.verifyInvoiceDetails(id).then(invoiceDetails => {
+                    if(invoiceDetails[0].invoiceExist == 0)
+                    {
+                        return resolve(1)
+                    }
+                    else
+                    {
+                        return resolve(0)
+                    }
+                })
+            }
+            else
+            {
+                return resolve(0)
+            }
+           })
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
 uniqueFunction.singleFileUpload = (fileObject, destinationBaseFolder, fileName, addiFolder) =>
 {
     return new Promise((resolve, reject)=>{
