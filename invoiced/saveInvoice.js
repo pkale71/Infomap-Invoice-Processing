@@ -29,7 +29,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         detail = 0
         totalItems = 0
         poMasterId = 0
-        if( !req.body.vendor || !req.body.vendor?.uuid || !req.body.barCode || !req.body.invoiceNumber || !req.body.invoiceDate || !req.body.baseAmount    || !req.body.discount || !req.body.gstAmount || !req.body.netAmount || req.body.invoiceDetails.length == 0)
+        if( !req.body.vendor || !req.body.vendor?.uuid || !req.body.barCode || !req.body.invoiceNumber || !req.body.invoiceDate || !req.body.baseAmount    || (parseFloat(req.body.discount) < 0) || !req.body.gstAmount || !req.body.netAmount || req.body.invoiceDetails.length == 0)
         {
             res.status(400)
             return res.json({
