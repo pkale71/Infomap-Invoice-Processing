@@ -25,7 +25,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>  {
                 res.status(200)
                 return res.json({
                     "status_code" : 200,
-                    "message"     : 'Invoice Verified',
+                    "message"     : 'success',
                     "status_name"   : getCode.getStatus(200)
                 })
             } 
@@ -49,7 +49,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>  {
                 res.status(200)
                 return res.json({
                     "status_code" : 200,
-                    "message"     : 'Invoice Processed',
+                    "message"     : 'success',
                     "status_name"   : getCode.getStatus(200)
                 })
             } 
