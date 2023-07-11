@@ -42,7 +42,11 @@ class invoice {
                 "gstMaster"    :   {
                                             "uuid" : data.gstUuid,
                                             "description" : data.gstDescription,
-                                            "taxCode" : data.tax_code
+                                            "taxCode" : data.tax_code,
+                                            "cgst" : data.cgst,
+                                            "sgst" : data.sgst,
+                                            "igst" : data.igst,
+                                            "ugst" : data.ugst
                 },
                 "poMaster"   :  {
                                     "uuid" : data.poMasterUuid,
