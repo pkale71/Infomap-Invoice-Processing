@@ -1,3 +1,4 @@
+let uniqueFunction = require('../common/commonFunction/uniqueSearchFunction')
 class invoice {
     uuid
     barCode
@@ -81,7 +82,7 @@ class invoice {
         this.uuid             =   data.uuid
         this.barCode             =   data.barcode
         this.totalItems           =   data.totalItems
-        this.invoiceDate              =   data.invoice_date
+        this.invoiceDate              =  uniqueFunction.changeDateToSqlDate(data.invoice_date) 
         this.invoiceNumber           =   data.invoice_number
         this.baseAmount           =   data.base_amount
         this.discount           =   data.discount
@@ -114,8 +115,8 @@ class invoice {
                                 }
         this.invoiceDetails       =   data.invoiceDetails,
         this.paymentTerms        =   data.payment_terms,
-        this.postingDate        =   data.posting_date,
-        this.baseLineDate        =   data.base_line_date,
+        this.postingDate        =   uniqueFunction.changeDateToSqlDate(data.posting_date),
+        this.baseLineDate        =   uniqueFunction.changeDateToSqlDate(data.base_line_date),
         this.currency            =   data.currency,
         this.documentHeaderText  =   data.document_header_text,
         this.withTaxAmount      =   data.with_tax_amount

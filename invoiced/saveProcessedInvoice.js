@@ -120,6 +120,15 @@ function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, po
                                 "status_name" : getCode.getStatus(200)
                             });
                         }
+                        else
+                        {
+                            res.status(200)
+                            return res.json({
+                                "status_code" : 200,
+                                "message"     : "Invoice Updated Successfully, But Not Processed",
+                                "status_name" : getCode.getStatus(200)
+                            });
+                        }
                     })
                 }
                 else
