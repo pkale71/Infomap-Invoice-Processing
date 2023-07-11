@@ -53,7 +53,7 @@ db.getCountries = () =>
     {
         try
         {
-            let sql = `SELECT id, name, code, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id 
+            let sql = `SELECT id, name, code, created_on, created_by_id, modify_on, modify_by_id 
             FROM country
             ORDER BY name`
             pool.query(sql,(error, result) => 

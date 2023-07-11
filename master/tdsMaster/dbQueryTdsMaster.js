@@ -53,8 +53,8 @@ db.getTdsMasters = () =>
     {
         try
         {
-            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, convert_tz(tm.created_on,'+00:00','+05:30') AS created_on, tm.created_by_id,
-            convert_tz(tm.modify_on,'+00:00','+05:30') AS modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
+            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, tm.created_on,tm.created_by_id,
+            tm.modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
             gm.uuid AS gstUuid, gm.tax_code, gm.description AS gstDescription
                        FROM tds_master tm
                        LEFT JOIN gl_account ga ON ga.id = tm.gl_account_id
@@ -83,8 +83,8 @@ db.getTdsInvoiceMasters = (glAccountUuid, gstMasterUuid) =>
     {
         try
         {
-            let sql = `SELECT tm.uuid, tm.description, tm.tax_section, convert_tz(tm.created_on,'+00:00','+05:30') AS created_on, tm.created_by_id,
-            convert_tz(tm.modify_on,'+00:00','+05:30') AS modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
+            let sql = `SELECT tm.uuid, tm.description, tm.tax_section,tm.created_on, tm.created_by_id,
+            tm.modify_on, tm.modify_by_id, tm.is_active, tm.rate, ga.uuid AS glAccUuid, ga.account_number, ga.ledger_description, 
             gm.uuid AS gstUuid, gm.tax_code, gm.description AS gstDescription
                        FROM tds_master tm
                        LEFT JOIN gl_account ga ON ga.id = tm.gl_account_id

@@ -32,7 +32,7 @@ db.selectToken = (token) =>
     {
         try
         {
-            let sql = `SELECT user_id AS userId, convert_tz(auth_time,'+00:00','+05:30') AS authTime, auth_token AS authToken FROM auth_data WHERE auth_token = ?`
+            let sql = `SELECT user_id AS userId, auth_time AS authTime, auth_token AS authToken FROM auth_data WHERE auth_token = ?`
             pool.query(sql,[token],(error, result) => 
             {
                 if(error)
@@ -56,7 +56,7 @@ db.getUserById = (userId) =>
         try
         {
             pool.query(`SELECT u.uuid, u.password, u.id, u.fullName,
-            u.user_type_id, convert_tz(u.last_logged_in,'+00:00','+05:30') AS last_logged_in, ut.name AS user_type_name, ut.code AS user_type_code
+            u.user_type_id, u.last_logged_in, ut.name AS user_type_name, ut.code AS user_type_code
             FROM user u
             LEFT JOIN user_type ut ON ut.id = u.user_type_id
             WHERE u.id = ? AND u.is_active = 1`, [userId], (error, users) => 

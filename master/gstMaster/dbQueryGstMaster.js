@@ -53,7 +53,7 @@ db.getGstMasters = () =>
     {
         try
         {
-            let sql = `SELECT uuid, description, tax_code, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id, is_active, cgst, sgst, igst, ugst
+            let sql = `SELECT uuid, description, tax_code, created_on, created_by_id, modify_on, modify_by_id, is_active, cgst, sgst, igst, ugst
             FROM gst_master
             WHERE is_active = 1
             ORDER BY description`

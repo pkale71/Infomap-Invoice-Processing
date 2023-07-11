@@ -53,7 +53,7 @@ db.getGlAccounts = () =>
     {
         try
         {
-            let sql = `SELECT uuid, ledger_description, account_number, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id, is_active
+            let sql = `SELECT uuid, ledger_description, account_number, created_on, created_by_id, modify_on, modify_by_id, is_active
             FROM gl_account
             WHERE is_active = 1
             ORDER BY ledger_description`

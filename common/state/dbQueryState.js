@@ -53,8 +53,8 @@ db.getStates = (countryId) =>
     {
         try
         {
-            let sql = `SELECT s.id, s.name, convert_tz(s.created_on,'+00:00','+05:30') AS created_on, s.created_by_id, 
-            convert_tz(s.modify_on,'+00:00','+05:30') AS modify_on, s.modify_by_id,
+            let sql = `SELECT s.id, s.name, s.created_on, s.created_by_id, 
+            s.modify_on, s.modify_by_id,
             c.name AS countryName, c.id AS countryId
             FROM state s 
             LEFT JOIN country c ON c.id = s.country_id

@@ -238,8 +238,8 @@ db.getPOs = (vendorUuid) =>
             let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
             pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 
             (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
-             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on, pm.po_file_name AS poFileName, 
-                        pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id, convert_tz(pm.invoiced_on,'+00:00','+05:30') AS invoiced_on, pm.invoiced_by_id, pm.is_active,
+             pm.created_on, pm.po_file_name AS poFileName, 
+                        pm.created_by_id, pm.processed_on, pm.processed_by_id, pm.invoiced_on, pm.invoiced_by_id, pm.is_active,
                          pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
                          p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid, ib.fullname AS invoicedName, ib.uuid AS invoicedUuid 
                                    FROM po_master pm
@@ -285,8 +285,8 @@ db.getProcessedPOs = (vendorUuid, invoiceUuid) =>
             let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
             pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 
             (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
-             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on, pm.po_file_name AS poFileName, 
-                        pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id, convert_tz(pm.invoiced_on,'+00:00','+05:30') AS invoiced_on, pm.invoiced_by_id, pm.is_active,
+             pm.created_on, pm.po_file_name AS poFileName, 
+                        pm.created_by_id, pm.processed_on, pm.processed_by_id, pm.invoiced_on, pm.invoiced_by_id, pm.is_active,
                          pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
                          p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid, ib.fullname AS invoicedName, ib.uuid AS invoicedUuid 
                                    FROM po_master pm
@@ -339,9 +339,9 @@ db.getPO = (poUuid) =>
             let sql = `SELECT mg.uuid AS materialUuid, mg.description AS materialDescription, mg.code AS materialCode, v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
             pm.uuid, pm.po_number, pm.total_amount, pm.total_items AS totalItems, ps.id AS poStatusId, ps.name AS poStatusName, 'Old' AS oper,
             (SELECT COUNT(id) FROM po_detail WHERE po_master_id = pm.id) AS savedItems,
-             convert_tz(pm.created_on,'+00:00','+05:30') AS created_on, pm.po_file_name AS poFileName, 
-                        pm.created_by_id, convert_tz(pm.processed_on,'+00:00','+05:30') AS processed_on, pm.processed_by_id,
-                        convert_tz(pm.invoiced_on,'+00:00','+05:30') AS invoiced_on, pm.invoiced_by_id, pm.is_active,
+             pm.created_on, pm.po_file_name AS poFileName, 
+                        pm.created_by_id, pm.processed_on, pm.processed_by_id,
+                        pm.invoiced_on, pm.invoiced_by_id, pm.is_active,
                          pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
                          p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, 
                          pb.fullname AS processedName, pb.uuid AS processedUuid, ib.fullname AS invoicedName, ib.uuid AS invoicedUuid,
@@ -349,8 +349,7 @@ db.getPO = (poUuid) =>
                          pc.uuid AS profitUuid, pc.description AS profitDescription, pc.code AS profitCode,
                          cc.uuid AS costUuid, cc.description AS costDescription, cc.code AS costCode,
                          ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber,
-                         convert_tz(pd.created_on,'+00:00','+05:30') AS poCreate, pcb.fullname AS poCreateName, pcb.uuid AS poCreateUuid, 
-                         convert_tz(pd.modify_on,'+00:00','+05:30') AS modify_on, mb.fullname AS modifyName, mb.uuid AS modifyUuid
+                         pd.created_on AS poCreate, pcb.fullname AS poCreateName, pcb.uuid AS poCreateUuid, pd.modify_on AS modify_on, mb.fullname AS modifyName, mb.uuid AS modifyUuid
                                    FROM po_detail pd
                                    LEFT JOIN profit_center pc ON pc.id = pd.profit_center_id
                                    LEFT JOIN cost_center cc ON cc.id = pd.cost_center_id
@@ -395,8 +394,8 @@ db.getNonInvoicedPODetails = (poUuid, invoiceUuid) =>
             pc.uuid AS profitUuid, pc.description AS profitDescription, pc.code AS profitCode,
             cc.uuid AS costUuid, cc.description AS costDescription, cc.code AS costCode,
             ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber,
-            convert_tz(pd.created_on,'+00:00','+05:30') AS poCreate, pcb.fullname AS poCreateName, pcb.uuid AS poCreateUuid, 
-            convert_tz(pd.modify_on,'+00:00','+05:30') AS modify_on, mb.fullname AS modifyName, mb.uuid AS modifyUuid
+            pd.created_on AS poCreate, pcb.fullname AS poCreateName, pcb.uuid AS poCreateUuid, 
+            pd.modify_on AS modify_on, mb.fullname AS modifyName, mb.uuid AS modifyUuid
                       FROM po_detail pd
                       LEFT JOIN profit_center pc ON pc.id = pd.profit_center_id
                       LEFT JOIN cost_center cc ON cc.id = pd.cost_center_id

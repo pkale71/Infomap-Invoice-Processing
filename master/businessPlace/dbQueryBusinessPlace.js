@@ -55,7 +55,7 @@ db.getBusinessPlaces = () =>
     {
         try
         {
-            let sql = `SELECT uuid, name, code, convert_tz(created_on,'+00:00','+05:30') AS created_on, created_by_id, convert_tz(modify_on,'+00:00','+05:30') AS modify_on, modify_by_id, is_active
+            let sql = `SELECT uuid, name, code, created_on, created_by_id, modify_on, modify_by_id, is_active
             FROM business_place
             WHERE is_active = 1
             ORDER BY name`

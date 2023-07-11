@@ -53,8 +53,8 @@ db.getCities = (countryId, stateId) =>
     {
         try
         {
-            let sql = `SELECT c.id, c.name, convert_tz(c.created_on,'+00:00','+05:30') AS created_on, c.created_by_id, 
-            convert_tz(c.modify_on,'+00:00','+05:30') AS modify_on, c.modify_by_id,
+            let sql = `SELECT c.id, c.name, c.created_on, c.created_by_id, 
+            c.modify_on, c.modify_by_id,
             s.name AS stateName, s.id AS stateId,
             cn.name AS countryName, cn.id AS countryId
             FROM city c 

@@ -88,8 +88,8 @@ db.getVendors = () =>
     {
         try
         {
-            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, convert_tz(v.created_on,'+00:00','+05:30') AS created_on,
-            v.created_by_id, convert_tz(v.modify_on,'+00:00','+05:30') AS modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
+            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, v.created_on,
+            v.created_by_id, v.modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
             v.address_line1, v.address_line2, v.address_line3, v.address_line4, v.contact1, v.contact2, v.email1, v.email2, v.email3, v.fax_number, v.industry_type, v.postal_code, v.telephone_exchange,
                        co.id AS countryId, co.name AS countryName, co.code AS countryCode, s.id AS stateId, s.name AS stateName, cy.id AS cityId, cy.name AS cityName
                        FROM vendor v
@@ -121,8 +121,8 @@ db.getVendor = (vendorUuid, code) =>
     {
         try
         {
-            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, convert_tz(v.created_on,'+00:00','+05:30') AS created_on,
-            v.created_by_id, convert_tz(v.modify_on,'+00:00','+05:30') AS modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
+            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, v.created_on,
+            v.created_by_id, v.modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
             v.address_line1, v.address_line2, v.address_line3, v.address_line4, v.contact1, v.contact2, v.email1, v.email2, v.email3, v.fax_number, v.industry_type, v.postal_code, v.telephone_exchange,
                        co.id AS countryId, co.name AS countryName, co.code AS countryCode, s.id AS stateId, s.name AS stateName, cy.id AS cityId, cy.name AS cityName
                        FROM vendor v
@@ -258,8 +258,8 @@ db.getMappedVendors = (clientUuid) =>
     {
         try
         {
-            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, convert_tz(v.created_on,'+00:00','+05:30') AS created_on,
-            v.created_by_id, convert_tz(v.modify_on,'+00:00','+05:30') AS modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
+            let sql = `SELECT c.uuid AS clientUuid, c.name AS clientName, c.code AS clientCode, v.uuid, v.code, v.name, v.created_on,
+            v.created_by_id, v.modify_on, v.modify_by_id, v.is_active, v.gst_number, v.pan_number, v.msme_number, v.account_group, v.corporate_group,
             v.address_line1, v.address_line2, v.address_line3, v.address_line4, v.contact1, v.contact2, v.email1, v.email2, v.email3, v.fax_number, v.industry_type, v.postal_code, v.telephone_exchange,
                        co.id AS countryId, co.name AS countryName, co.code AS countryCode, s.id AS stateId, s.name AS stateName, cy.id AS cityId, cy.name AS cityName
                        FROM vendor v

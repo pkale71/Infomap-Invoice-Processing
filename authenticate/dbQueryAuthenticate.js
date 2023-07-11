@@ -8,7 +8,7 @@ db.getUserByEmail = (email) =>
         try
         {
             let sql = `SELECT u.id, u.password, u.uuid, u.fullName, 
-            u.user_type_id, ut.name AS user_type_name, ut.code AS user_type_code, convert_tz(u.last_logged_in,'+00:00','+05:30') AS last_logged_in, u.is_active
+            u.user_type_id, ut.name AS user_type_name, ut.code AS user_type_code, u.last_logged_in, u.is_active
             FROM user u
             LEFT JOIN user_type ut ON ut.id = u.user_type_id
             WHERE u.email = '${email}' AND u.is_active =1`
