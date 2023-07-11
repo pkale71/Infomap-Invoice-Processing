@@ -276,7 +276,7 @@ db.getPOs = (vendorUuid) =>
     })
 }
 
-db.getProcessedPOs = (vendorUuid) => 
+db.getProcessedPOs = (vendorUuid, invoiceUuid) => 
 {
     return new Promise((resolve, reject) => 
     {
@@ -298,8 +298,17 @@ db.getProcessedPOs = (vendorUuid) =>
                                    LEFT JOIN user cb ON cb.id = pm.created_by_id
                                    LEFT JOIN user pb ON pb.id = pm.processed_by_id
                                    LEFT JOIN user ib ON ib.id = pm.invoiced_by_id
-                                   WHERE pm.is_active = 1 AND pm.po_status_id IN (SELECT id FROM po_status WHERE (name = 'Processed' OR  name = 'Partially-Invoiced')) 
-                                   `
+                                   WHERE pm.is_active = 1 AND (pm.po_status_id IN (SELECT id FROM po_status WHERE (name = 'Processed' OR  name = 'Partially-Invoiced')) `
+                                   
+            if(invoiceUuid?.length > 0)
+            {
+                sql = sql + ` OR pm.id IN (SELECT po_master_id FROM invoice_detail WHERE invoice_id = (SELECT id FROM invoice_master WHERE uuid = '${invoiceUuid}')))`
+            }
+            else
+            {
+                sql = sql + ')'
+            }
+
             if(vendorUuid?.length > 4)
             {
                 sql = sql + ` AND v.uuid = '${vendorUuid}'`
@@ -376,7 +385,7 @@ db.getPO = (poUuid) =>
     })
 }
 
-db.getNonInvoicedPODetails = (poUuid) => 
+db.getNonInvoicedPODetails = (poUuid, invoiceUuid) => 
 {
     return new Promise((resolve, reject) => 
     {
@@ -394,9 +403,19 @@ db.getNonInvoicedPODetails = (poUuid) =>
                       LEFT JOIN gl_account ga ON ga.id = pd.gl_account_id
                       LEFT JOIN user pcb ON pcb.id = pd.created_by_id
                       LEFT JOIN user mb ON mb.id = pd.modify_by_id
-                      WHERE pd.po_master_id = (SELECT id FROM po_master WHERE uuid = '${poUuid}')  AND pd.is_invoiced = 0
-                      ORDER BY pd.sno
-                                   `
+                      WHERE pd.po_master_id = (SELECT id FROM po_master WHERE uuid = '${poUuid}')  AND (pd.is_invoiced = 0 `
+            if(invoiceUuid?.length > 0)
+            {
+                sql = sql + ` OR pd.id IN (SELECT po_detail_id FROM invoice_detail WHERE invoice_id = (SELECT id FROM invoice_master WHERE uuid = '${invoiceUuid}') AND 
+                po_master_id = (SELECT id FROM po_master WHERE uuid = '${poUuid}')))`
+            }
+            else
+            {
+                sql = sql + ')'
+            }
+
+            sql = sql + ` ORDER BY pd.sno`
+            // console.log(sql)
             pool.query(sql,(error, result) => 
             {
                 if(error)

@@ -6,13 +6,31 @@ let getCode = new errorCode()
 let getNonInvoicedPODetails;
 let poList = []
 let poUuid;
-module.exports = require('express').Router().get('/:poUuid',async(req,res) => 
+let invoiceUuid;
+module.exports = require('express').Router().get('/:poUuid/:invoiceUuid?*',async(req,res) => 
 {
     try
     {
-        // getNonInvoicedPODetails
-        poUuid = req.params.poUuid
-        getNonInvoicedPODetails = await db.getNonInvoicedPODetails(poUuid)
+        if(req.params['0'].length > 0 &&  req.params['0'] != '/')
+        {
+            let a = req.params['0'].split('/')
+            if(a.length > 1)
+            {
+                poUuid = req.params.poUuid + a[0]
+                invoiceUuid = a[1]
+            }
+            else if(a.length == 1) 
+            {
+                poUuid = req.params.poUuid + a[0]
+                invoiceUuid = ""
+            }
+        }
+        else
+        {
+            poUuid = req.params.poUuid
+            invoiceUuid = req.params['invoiceUuid'] ? req.params['invoiceUuid'] : ""
+        }
+        getNonInvoicedPODetails = await db.getNonInvoicedPODetails(poUuid, invoiceUuid)
         if(getNonInvoicedPODetails.length == 0)
         {
             res.status(200)

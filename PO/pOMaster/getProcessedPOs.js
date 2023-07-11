@@ -6,7 +6,8 @@ let getCode = new errorCode()
 let getProcessedPOs;
 let poList = []
 let vendorUuid;
-module.exports = require('express').Router().get('/:vendorUuid?*',async(req,res) => 
+let invoiceUuid;
+module.exports = require('express').Router().get('/:vendorUuid/:invoiceUuid?*',async(req,res) => 
 {
     try
     {
@@ -15,18 +16,21 @@ module.exports = require('express').Router().get('/:vendorUuid?*',async(req,res)
             let a = req.params['0'].split('/')
             if(a.length > 1)
             {
-                vendorUuid = req.params['vendorUuid'] + a[0]
+                vendorUuid = req.params.vendorUuid + a[0]
+                invoiceUuid = a[1]
             }
             else if(a.length == 1) 
             {
-                vendorUuid = req.params['vendorUuid']+ a[0]
+                vendorUuid = req.params.vendorUuid + a[0]
+                invoiceUuid = ""
             }
         }
         else
         {
-            vendorUuid = req.params['vendorUuid']
+            vendorUuid = req.params.vendorUuid
+            invoiceUuid = req.params['invoiceUuid'] ? req.params['invoiceUuid'] : ""
         }
-        getProcessedPOs = await db.getProcessedPOs(vendorUuid)
+        getProcessedPOs = await db.getProcessedPOs(vendorUuid, invoiceUuid)
         if(getProcessedPOs.length == 0)
         {
             res.status(200)

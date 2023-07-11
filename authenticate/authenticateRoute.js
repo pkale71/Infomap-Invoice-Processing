@@ -4,6 +4,7 @@ let errorCode = require('../common/errorCode/errorCode')
 let getCode = new errorCode()
 authRoute.use('/login', require('./login'))
 authRoute.use('/logout', require('./validateToken'), require('./logout'))
+authRoute.use('/changePassword', require('./validateToken'), require('./logout'))
 authRoute.use('/',(req,res,next) => 
 {
     return res.status(400).json({

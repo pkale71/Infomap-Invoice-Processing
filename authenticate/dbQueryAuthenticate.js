@@ -97,4 +97,26 @@ db.deleteToken = (token) =>
     });
 };
 
+db.updateUser = (userId,password) =>
+{
+    return new Promise((resolve, reject) =>
+    {
+        try
+        {
+            pool.query('UPDATE user SET password = ? WHERE id = ?', [password,userId], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        { 
+            console.log(e)
+        }            
+    });
+};
+
 module.exports = db
