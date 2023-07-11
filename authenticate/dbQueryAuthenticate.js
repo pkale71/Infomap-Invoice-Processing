@@ -51,13 +51,13 @@ db.insertLastLogin = (authTime, userId) =>
     });
 };
 
-db.insertToken = (authtoken, userId, authTime) =>
+db.insertToken = (authToken, userId, authTime) =>
 {
     return new Promise((resolve, reject) =>
     {
         try
         {
-            let sql = `INSERT INTO auth_data (auth_token, user_id, auth_time) VALUES ('${authtoken}',  ${userId}, ?)`
+            let sql = `INSERT INTO auth_data (auth_token, user_id, auth_time) VALUES ('${authToken}',  ${userId}, ?)`
             pool.query(sql, [authTime], (error, result) =>
             {
                 if(error)

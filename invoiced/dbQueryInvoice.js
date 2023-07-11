@@ -233,9 +233,9 @@ db.getInvoices = (vendorUuid) =>
             im.uuid, im.barcode, im.base_amount, im.invoice_number, DATE_FORMAT(im.invoice_date, '%m-%d-%Y') AS invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active,
             s.id AS invoiceStatusId, s.name AS invoiceStatusName, 
             (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
-             convert_tz(im.created_on,'+00:00','+05:30') AS created_on,  
-                        im.created_by_id, convert_tz(im.processed_on,'+00:00','+05:30') AS processed_on, im.processed_by_id,
-                        convert_tz(im.verified_on,'+00:00','+05:30') AS verified_on, im.verified_by_id, vb.fullname AS verifiedName, vb.uuid AS verifiedUuid,
+             im.created_on,  
+                        im.created_by_id, im.processed_on, im.processed_by_id,
+                        im.verified_on, im.verified_by_id, vb.fullname AS verifiedName, vb.uuid AS verifiedUuid,
                         cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid,
                         im.payment_terms, DATE_FORMAT(im.posting_date, '%m-%d-%Y') AS posting_date, DATE_FORMAT(im.base_line_date, '%m-%d-%Y') AS base_line_date, im.currency, im.document_header_text, im.with_tax_amount
                         FROM invoice_master im
@@ -275,13 +275,14 @@ db.getInvoice = (invoiceUuid) =>
     {
         try
         {
+            //convert_tz(im.processed_on,'+00:00','+05:30') AS 
             let sql = `SELECT  v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
             im.uuid, im.barcode, im.base_amount, im.invoice_number,DATE_FORMAT(im.invoice_date, '%m-%d-%Y') AS invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active,
             s.id AS invoiceStatusId, s.name AS invoiceStatusName, 
             (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
-            convert_tz(im.created_on,'+00:00','+05:30') AS created_on,  
-            im.created_by_id, convert_tz(im.processed_on,'+00:00','+05:30') AS processed_on, im.processed_by_id,
-            convert_tz(im.verified_on,'+00:00','+05:30') AS verified_on,
+            im.created_on,  
+            im.created_by_id, im.processed_on, im.processed_by_id,
+            im.verified_on,
             im.verified_by_id, im.payment_terms, DATE_FORMAT(im.posting_date, '%m-%d-%Y') AS posting_date, DATE_FORMAT(im.base_line_date, '%m-%d-%Y') AS base_line_date, im.currency, im.document_header_text, im.with_tax_amount, id.tds_rate,
             cb.fullname AS createName, cb.uuid AS createUuid, pb.fullname AS processedName, pb.uuid AS processedUuid, vb.fullname AS verifiedName, vb.uuid AS verifiedUuid,
                          id.uuid AS invoiceUuid, id.discount AS invoiceDiscount, id.cgst_amount, id.sgst_amount, id.igst_amount, 
