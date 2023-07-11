@@ -56,7 +56,6 @@ module.exports = require('express').Router().get('/:vendorUuid?*',async(req,res)
     }
     catch(e)
     {
-        console.log(e)
         res.status(500)
         return res.json({
             "status_code" : 500,
