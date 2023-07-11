@@ -17,7 +17,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>  {
         
         if(checkStatus[0].is_active == 1 && checkStatus[0].invoice_status_id == 1 && checkStatus[0].created_on != null && checkStatus[0].verified_on == null && checkStatus[0].processed_on == null)
         {
-            let sql = `UPDATE invoice_master SET verified_on = ?, verified_by_id = ${userId} where uuid = '${uuid}'`
+            let sql = `UPDATE invoice_master SET invoice_status_id = 2, verified_on = ?, verified_by_id = ${userId} where uuid = '${uuid}'`
 
             let changeStatus = await db.changeStatus(sql, new Date())
 
@@ -39,9 +39,9 @@ module.exports = require('express').Router().post('/',async(req,res) =>  {
                 })   
             }
         }
-        else if(checkStatus[0].is_active == 1 && checkStatus[0].invoice_status_id == 1 && checkStatus[0].created_on != null && checkStatus[0].verified_on != null && checkStatus[0].processed_on == null)
+        else if(checkStatus[0].is_active == 1 && checkStatus[0].invoice_status_id == 2 && checkStatus[0].created_on != null && checkStatus[0].verified_on != null && checkStatus[0].processed_on == null)
         {
-            let sql = `UPDATE invoice_master SET processed_on = ?, processed_by_id = ${userId} where uuid = '${uuid}'`
+            let sql = `UPDATE invoice_master SET invoice_status_id = 3, processed_on = ?, processed_by_id = ${userId} where uuid = '${uuid}'`
 
             let changeStatus = await db.changeStatus(sql, new Date())
 
@@ -63,7 +63,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>  {
                 })   
             }
         }
-        else if(checkStatus[0].is_active == 1 && checkStatus[0].invoice_status_id == 1 && checkStatus[0].created_on != null && checkStatus[0].verified_on != null && checkStatus[0].processed_on != null)
+        else if(checkStatus[0].is_active == 1 && checkStatus[0].invoice_status_id == 3 && checkStatus[0].created_on != null && checkStatus[0].verified_on != null && checkStatus[0].processed_on != null)
         {
             res.status(200)
             return res.json({
