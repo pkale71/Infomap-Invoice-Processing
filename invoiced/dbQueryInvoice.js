@@ -183,8 +183,34 @@ db.poStatusUpdate = (id, invoicedOn, invoicedById) =>
         try
         {
             let sql = `UPDATE po_master SET invoiced_on = ?, invoiced_by_id = ${invoicedById}, po_status_id = (SELECT IF(COUNT(id) = 0,(SELECT id FROM po_status WHERE name = 'Invoiced'),(SELECT id FROM po_status WHERE name = 'Partially-Invoiced')) 
-            FROM po_detail WHERE po_master_id = ${id} AND is_invoiced = 0) WHERE id = ${id};`
+            FROM po_detail WHERE po_master_id IN (${id}) AND is_invoiced = 0) WHERE id IN (${id});`
             pool.query(sql, [invoicedOn], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.poStatusList = (ids) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `SELECT pm.id, pm.po_status_id, ps.name
+            FROM po_master pm
+            LEFT JOIN po_status ps ON ps.id = pm.po_status_id
+            WHERE pm.id IN (${ids})`
+            pool.query(sql, (error, result) => 
             {
                 if(error)
                 {
@@ -208,6 +234,54 @@ db.invoiceStatusUpdate = (id, processedOn, processedById) =>
         {
             let sql = `UPDATE invoice_master SET processed_on = ?, processed_by_id = ${processedById}, invoice_status_id = (SELECT id FROM invoice_status WHERE name = 'Processed') WHERE id = ${id};`
             pool.query(sql, [processedOn], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.poDetailStatusIdUpdate = (id, modifyOn, modifyById) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `UPDATE po_detail SET modify_on = ?, modify_by_id = ${modifyById}, is_invoiced = 0 WHERE id IN (SELECT po_detail_id FROM invoice_detail WHERE invoice_id = ${id})`
+            pool.query(sql, [modifyOn], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e)
+        {
+            throw e
+        }
+    })
+}
+
+db.poMasterStatusIdUpdate = (id) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            let sql = `UPDATE po_master SET po_status_id = (SELECT IF(COUNT(id) = 0,(SELECT id FROM po_status WHERE name = 'Processed'),
+            (SELECT id FROM po_status WHERE name = 'Partially-Invoiced')) 
+                        FROM po_detail WHERE po_master_id IN (${id}) AND is_invoiced = 1) WHERE id IN (${id});`
+            pool.query(sql, (error, result) => 
             {
                 if(error)
                 {
@@ -329,7 +403,7 @@ db.getIdAndStatus = (uuid) =>
     {
         try
         {
-            let sql = `SELECT im.id, s.name
+            let sql = `SELECT im.id, s.name, (SELECT GROUP_CONCAT(DISTINCT po_master_id) FROM invoice_detail WHERE invoice_id = im.id) AS po_master_id
             FROM invoice_master im
             LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
             WHERE im.uuid = '${uuid}'`

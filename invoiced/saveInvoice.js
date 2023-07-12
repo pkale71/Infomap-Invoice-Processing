@@ -28,7 +28,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         poDetailIds = ""
         detail = 0
         totalItems = 0
-        poMasterId = 0
+        poMasterId = ''
         if( !req.body.vendor || !req.body.vendor?.uuid || !req.body.barCode || !req.body.invoiceNumber || !req.body.invoiceDate || !req.body.baseAmount    || (parseFloat(req.body.discount) < 0) || !req.body.gstAmount || !req.body.netAmount || req.body.invoiceDetails.length == 0)
         {
             res.status(400)
@@ -93,7 +93,14 @@ function saveInvoiceDetails(invoiceDetails, start, end, uuid,vendorUuid, barCode
                     {
                         poDetailIds = poDetailIds + ',' + ids[0].poDetailId
                     }
-                    poMasterId = ids[0].poMasterId
+                    if(poMasterId.length == 0)
+                    {
+                        poMasterId = poMasterId + ids[0].poMasterId
+                    }
+                    else
+                    {
+                        poMasterId = poMasterId + ',' + ids[0].poMasterId
+                    }
                     let identifierName = 'invoice_detail'
                     let id = 0
                     let columnName = ['po_master_id', 'po_detail_id']

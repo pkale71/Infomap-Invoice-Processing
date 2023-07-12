@@ -1,3 +1,4 @@
+const uniqueFunction = require("../common/commonFunction/uniqueSearchFunction")
 class PO {
     uuid
     poNumber
@@ -27,7 +28,7 @@ class PO {
                 "uuid"      :   data.poUuid,
                 "sno"          :   data.sno,
                 "activityText"          :   data.activity_text,
-                "monthPeriod"          :   data.month_period,
+                "monthPeriod"          :  uniqueFunction.changeDateToSqlDate(data.month_period),
                 "hsnSac"           :   data.hsn_sac,
                 "isInvoiced"           :   data.is_invoiced,
                 "createdOn  "    :   data.poCreate,

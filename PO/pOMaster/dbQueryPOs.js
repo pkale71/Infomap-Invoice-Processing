@@ -8,8 +8,16 @@ db.savePOs = (ele) =>
     {
         try
         {
-            let sql = `INSERT into po_detail (sno, po_master_id, activity_text, month_period, amount, gl_account_id, is_invoiced, created_on, created_by_id, uuid) VALUES ('${ele['Line ITEMS']}','${ele.poId}', '${uniqueFunction.manageSpecialCharacter(ele['Short Text'])}','${ele['Month or Period'] ? ele['Month or Period'] : '' }', '${ele['Net Price']}',(SELECT id FROM gl_account WHERE account_number = '${ele['G/L Account']}'), 0, ?, '${ele.createdById}', '${ele.uuid}')`
-
+            let sql = `INSERT into po_detail (sno, po_master_id, activity_text, month_period, amount, gl_account_id, is_invoiced, created_on, created_by_id, uuid) VALUES ('${ele['Line ITEMS']}','${ele.poId}', '${uniqueFunction.manageSpecialCharacter(ele['Short Text'])}' `
+            if(!ele['Month or Period'])
+            {
+                sql = sql + `, null`
+            }
+            else
+            {
+                sql = sql + `, '${ele['Month or Period']}'`
+            }
+            sql = sql + `, '${ele['Net Price']}',(SELECT id FROM gl_account WHERE account_number = '${ele['G/L Account']}'), 0, ?, '${ele.createdById}', '${ele.uuid}')`
             pool.query(sql, [ele.createdOn], (error, result) => 
             {
                 if(error)

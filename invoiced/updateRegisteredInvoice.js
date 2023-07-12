@@ -28,7 +28,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         poDetailIds = ""
         detail = 0
         totalItems = 0
-        poMasterId = 0
+        poMasterId = ''
         if(!req.body.uuid || !req.body.vendor || !req.body.vendor?.uuid || !req.body.barCode || !req.body.invoiceNumber || !req.body.invoiceDate || !req.body.baseAmount    || (parseFloat(req.body.discount) < 0) || !req.body.gstAmount || !req.body.netAmount || req.body.invoiceDetails.length == 0)
         {
             res.status(400)
@@ -66,20 +66,60 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         }
         if(status[0].name == 'Registered')
         {
-            let deleteInvoice = await db.deleteInvoiceDetails(status[0].id);
-            if(deleteInvoice.affectedRows > 0)
+            let poDetailStatusIdUpdate = await db.poDetailStatusIdUpdate(status[0].id, new Date(), userId)
+            if(poDetailStatusIdUpdate.affectedRows > 0)
             {
-                invoiceId = status[0].id
-                updateInvoiceMasters(invoiceDetails, 0, 0, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
+                let poMasterStatusIdUpdate = await db.poMasterStatusIdUpdate(status[0].po_master_id)
+                if(poMasterStatusIdUpdate.affectedRows > 0)
+                {
+                    let poStatusList = await db.poStatusList()
+                    if(poStatusList)
+                    {
+                        poStatusList.forEach(element => {
+                            if(element.name == 'Partially-Invoiced')
+                            {
+                                let sql = `UPDATE `
+                            }
+                            else
+                            {
+
+                            }
+                        });
+                    }
+                    let deleteInvoice = await db.deleteInvoiceDetails(status[0].id);
+                    if(deleteInvoice.affectedRows > 0)
+                    {
+                        invoiceId = status[0].id
+                        updateInvoiceMasters(invoiceDetails, 0, 0, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
+                    }
+                    else
+                    {
+                        res.status(400)
+                        return res.json({
+                            "status_code" : 400,
+                            "message" : `Invoice Master not Updated`,
+                            "status_name" : getCode.getStatus(400)
+                        })
+                    }
+                }
+                else
+                {
+                    res.status(400)
+                    return res.json({
+                        "status_code" : 400,
+                        "message" : `Invoice Master not Updated`,
+                        "status_name" : getCode.getStatus(400)
+                    })
+                }
             }
             else
             {
                 res.status(400)
-                return res.json({
-                    "status_code" : 400,
-                    "message" : `Invoice Master not Updated`,
-                    "status_name" : getCode.getStatus(400)
-                })
+                    return res.json({
+                        "status_code" : 400,
+                        "message" : `Invoice Master not Updated`,
+                        "status_name" : getCode.getStatus(400)
+                    })
             }
         }
         else
@@ -128,7 +168,14 @@ function saveInvoiceDetails(invoiceDetails, start, end, uuid,vendorUuid, barCode
                     {
                         poDetailIds = poDetailIds + ',' + ids[0].poDetailId
                     }
-                    poMasterId = ids[0].poMasterId
+                    if(poMasterId.length == 0)
+                    {
+                        poMasterId = ids[0].poMasterId
+                    }
+                    else
+                    {
+                        poMasterId = poMasterId + ',' + ids[0].poMasterId
+                    }
                     let identifierName = 'invoice_detail'
                     let id = 0
                     let columnName = ['po_master_id', 'po_detail_id']

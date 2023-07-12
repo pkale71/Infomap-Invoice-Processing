@@ -56,7 +56,7 @@ class invoice {
                     "uuid"      :   data.poDetailUuid,
                     "sno"          :   data.sno,
                     "activityText"          :   data.activity_text,
-                    "monthPeriod"          :   data.month_period,
+                    "monthPeriod"          :   uniqueFunction.changeDateToSqlDate(data.month_period),
                     "hsnSac"           :   data.hsn_sac,
                     "glAccount"   :   {
                                                 "uuid" : data.glAccountUuid,
