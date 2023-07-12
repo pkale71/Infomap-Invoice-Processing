@@ -182,8 +182,8 @@ db.poStatusUpdate = (id, invoicedOn, invoicedById) =>
     {
         try
         {
-            let sql = `UPDATE po_master SET invoiced_on = ?, invoiced_by_id = ${invoicedById}, po_status_id = (SELECT IF(COUNT(id) = 0,(SELECT id FROM po_status WHERE name = 'Invoiced'),(SELECT id FROM po_status WHERE name = 'Partially-Invoiced')) 
-            FROM po_detail WHERE po_master_id IN (${id}) AND is_invoiced = 0) WHERE id IN (${id});`
+            let sql = `UPDATE po_master pm SET invoiced_on = ?, invoiced_by_id = ${invoicedById}, po_status_id = (SELECT IF(COUNT(id) = 0,(SELECT id FROM po_status WHERE name = 'Invoiced'),(SELECT id FROM po_status WHERE name = 'Partially-Invoiced')) 
+            FROM po_detail WHERE po_master_id = pm.id AND is_invoiced = 0) WHERE id IN (${id});`
             pool.query(sql, [invoicedOn], (error, result) => 
             {
                 if(error)
@@ -278,9 +278,9 @@ db.poMasterStatusIdUpdate = (id) =>
     {
         try
         {
-            let sql = `UPDATE po_master SET po_status_id = (SELECT IF(COUNT(id) = 0,(SELECT id FROM po_status WHERE name = 'Processed'),
+            let sql = `UPDATE po_master pm SET po_status_id = (SELECT IF(COUNT(id) = 0,(SELECT id FROM po_status WHERE name = 'Processed'),
             (SELECT id FROM po_status WHERE name = 'Partially-Invoiced')) 
-                        FROM po_detail WHERE po_master_id IN (${id}) AND is_invoiced = 1) WHERE id IN (${id});`
+                        FROM po_detail WHERE po_master_id = pm.id AND is_invoiced = 1) WHERE id IN (${id});`
             pool.query(sql, (error, result) => 
             {
                 if(error)
