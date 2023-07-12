@@ -72,7 +72,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 let poMasterStatusIdUpdate = await db.poMasterStatusIdUpdate(status[0].po_master_id)
                 if(poMasterStatusIdUpdate.affectedRows > 0)
                 {
-                    let poStatusList = await db.poStatusList(poMasterId)
+                    let poStatusList = await db.poStatusList(status[0].po_master_id)
                     invoiceId = status[0].id
                     updateInvoiceDateAll(invoiceDetails, 0, poStatusList.length, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId, poStatusList)
                 }
