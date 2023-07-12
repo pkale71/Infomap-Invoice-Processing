@@ -72,35 +72,9 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 let poMasterStatusIdUpdate = await db.poMasterStatusIdUpdate(status[0].po_master_id)
                 if(poMasterStatusIdUpdate.affectedRows > 0)
                 {
-                    let poStatusList = await db.poStatusList()
-                    if(poStatusList)
-                    {
-                        poStatusList.forEach(element => {
-                            if(element.name == 'Partially-Invoiced')
-                            {
-                                let sql = `UPDATE po_master SET invoiced_on = ?, invoiced_by_id = ${userId} `
-                            }
-                            else
-                            {
-
-                            }
-                        });
-                    }
-                    let deleteInvoice = await db.deleteInvoiceDetails(status[0].id);
-                    if(deleteInvoice.affectedRows > 0)
-                    {
-                        invoiceId = status[0].id
-                        updateInvoiceMasters(invoiceDetails, 0, 0, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
-                    }
-                    else
-                    {
-                        res.status(400)
-                        return res.json({
-                            "status_code" : 400,
-                            "message" : `Invoice Master not Updated`,
-                            "status_name" : getCode.getStatus(400)
-                        })
-                    }
+                    let poStatusList = await db.poStatusList(poMasterId)
+                    invoiceId = status[0].id
+                    updateInvoiceDateAll(invoiceDetails, 0, poStatusList.length, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId, poStatusList)
                 }
                 else
                 {
@@ -333,4 +307,72 @@ function updateInvoiceMasters(invoiceDetails, start, end,  uuid,vendorUuid, barC
             }
         }
     })
+}
+
+function updateInvoiceDateAll(invoiceDetails, start, end,  uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId, poStatusList)
+{ 
+    try
+    {
+        if(start < end)
+        {
+            if((poStatusList[start].name == 'Partially-Invoiced') || (poStatusList[start].name == 'Invoiced'))
+            {
+                let sql = `UPDATE po_master SET invoiced_on = ?, invoiced_by_id = ${userId} WHERE id = ${poStatusList[start].id}`;
+                db.updateInvoiceDate(sql, new Date()).then(updateInvoiceDate => {
+                    if(updateInvoiceDate)
+                    {
+                        start++
+                        updateInvoiceDateAll(invoiceDetails, start, end,  uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId, poStatusList)
+                    }
+                })
+            }
+            else
+            {
+                let sql = `UPDATE po_master SET invoiced_on = null, invoiced_by_id = null WHERE id = ${poStatusList[start].id}`;
+                db.updateInvoiceDate(sql, new Date()).then(updateInvoiceDate => {
+                    if(updateInvoiceDate)
+                    {
+                        start++
+                        updateInvoiceDateAll(invoiceDetails, start, end,  uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId, poStatusList)
+                    }
+                })
+            }
+        }
+        else
+        {
+            db.deleteInvoiceDetails(invoiceId).then((deleteInvoice) =>{
+                if(deleteInvoice)
+                {
+                    if(deleteInvoice.affectedRows > 0)
+                    {
+                        invoiceId = status[0].id
+                        updateInvoiceMasters(invoiceDetails, 0, 0, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
+                    }
+                    else
+                    {
+                        res.status(400)
+                        return res.json({
+                            "status_code" : 400,
+                            "message" : `Invoice Master not Updated`,
+                            "status_name" : getCode.getStatus(400)
+                        })
+                    }
+                }
+                else
+                {
+                    res.status(400)
+                    return res.json({
+                        "status_code" : 400,
+                        "message" : `Invoice Master not Updated`,
+                        "status_name" : getCode.getStatus(400)
+                    })
+                }
+            })
+                   
+        }
+    }
+    catch(e)
+    {
+        console.log(e)
+    }
 }

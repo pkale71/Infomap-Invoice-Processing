@@ -537,4 +537,24 @@ db.changeStatus = (sql, date) =>
     });
 }
 
+db.updateInvoiceDate = (sql, date) => 
+{
+    return new Promise((resolve, reject) => 
+    {
+        try
+        {
+            pool.query(sql, [date], (error, result) => 
+            {
+                if(error)
+                {
+                    return reject(error);
+                }          
+                return resolve(result);
+            });
+        }
+        catch(e){ console.log(e)}
+        
+    });
+}
+
 module.exports = db
