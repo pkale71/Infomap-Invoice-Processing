@@ -353,7 +353,7 @@ db.getPO = (poUuid) =>
                          pg.uuid AS purchaseUuid, pg.description AS purchaseDescription, pg.code AS purchaseCode,
                          p.uuid AS plantUuid, p.code AS plantCode, p.name AS plantName, cb.fullname AS createName, cb.uuid AS createUuid, 
                          pb.fullname AS processedName, pb.uuid AS processedUuid, ib.fullname AS invoicedName, ib.uuid AS invoicedUuid,
-                         pd.uuid AS poUuid, pd.sno, pd.amount, pd.is_invoiced, pd.month_period, pd.activity_text, pd.hsn_sac, 
+                         pd.uuid AS poUuid, pd.sno, pd.amount, pd.is_invoiced, DATE_FORMAT(pd.month_period, '%m-%d-%Y') AS month_period, pd.activity_text, pd.hsn_sac, 
                          pc.uuid AS profitUuid, pc.description AS profitDescription, pc.code AS profitCode,
                          cc.uuid AS costUuid, cc.description AS costDescription, cc.code AS costCode,
                          ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber,
@@ -398,7 +398,7 @@ db.getNonInvoicedPODetails = (poUuid, invoiceUuid) =>
     {
         try
         {
-            let sql = `SELECT pd.uuid AS poUuid, pd.sno, pd.amount, pd.is_invoiced, pd.month_period, pd.activity_text, pd.hsn_sac, 
+            let sql = `SELECT pd.uuid AS poUuid, pd.sno, pd.amount, pd.is_invoiced, DATE_FORMAT(pd.month_period, '%m-%d-%Y') AS month_period, pd.activity_text, pd.hsn_sac, 
             pc.uuid AS profitUuid, pc.description AS profitDescription, pc.code AS profitCode,
             cc.uuid AS costUuid, cc.description AS costDescription, cc.code AS costCode,
             ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber,

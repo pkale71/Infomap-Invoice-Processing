@@ -500,7 +500,9 @@ db.checkStatus = (uuid) =>
     {
         try
         {
-              let  sql = `SELECT is_active, created_on, verified_on, processed_on, invoice_status_id FROM invoice_master WHERE uuid = '${uuid}'`;
+              let  sql = `SELECT im.is_active, im.created_on, im.verified_on, im.processed_on, s.name, invoice_status_id FROM invoice_master im 
+              LEFT JOIN invoice_status s ON s.id = im.invoice_status_id
+              WHERE im.uuid = '${uuid}'`;
             pool.query(sql,(error, result) => 
             {
                 if(error)
