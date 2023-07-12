@@ -364,7 +364,7 @@ db.getInvoice = (invoiceUuid) =>
                          tm.tax_section AS tdsMasterTaxSection, tm.description AS tdsMasterDescription, id.invoice_payable_amount, id.with_tax_amount AS invoiceWithTaxAmount,  
                          gm.tax_code, gm.description AS gstDescription, gm.cgst, gm.sgst, gm.igst, gm.ugst, gm.uuid AS gstUuid,
                          pm.uuid AS poMasterUuid, pm.po_number, 
-                         pd.uuid AS poDetailUuid, pd.sno, pd.month_period, pd.activity_text, pd.hsn_sac, 
+                         pd.uuid AS poDetailUuid, pd.sno, DATE_FORMAT(pd.month_period, '%m-%d-%Y') AS month_period, pd.activity_text, pd.hsn_sac, 
                          ga.uuid AS glAccountUuid, ga.ledger_description, ga.account_number AS glAccountNumber
                                    FROM invoice_detail id
                                    LEFT JOIN gst_master gm ON gm.id = id.gst_master_id

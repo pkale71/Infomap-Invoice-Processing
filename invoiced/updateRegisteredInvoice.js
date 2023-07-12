@@ -78,7 +78,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                         poStatusList.forEach(element => {
                             if(element.name == 'Partially-Invoiced')
                             {
-                                let sql = `UPDATE `
+                                let sql = `UPDATE po_master SET invoiced_on = ?, invoiced_by_id = ${userId} `
                             }
                             else
                             {
