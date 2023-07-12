@@ -937,7 +937,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
     console.log(new Date())
     if(fileReturn == 1)
     {
-      reader.writeFile(file1, './'+filename) 
+      //reader.writeFile(file1, './'+filename) 
       let xlsxFile = fs.readFileSync('./'+filename, 'base64')
       xlsxFile = `data:${mimeType};base64,` + xlsxFile
       res.status(200)
