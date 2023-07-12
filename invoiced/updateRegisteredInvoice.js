@@ -345,7 +345,6 @@ function updateInvoiceDateAll(invoiceDetails, start, end,  uuid,vendorUuid, barC
                 {
                     if(deleteInvoice.affectedRows > 0)
                     {
-                        invoiceId = status[0].id
                         updateInvoiceMasters(invoiceDetails, 0, 0, uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, isActive,baseAmount, discount, gstAmount, netAmount, totalItems, userId, res, detail, invoiceId, poDetailIds, poMasterId)
                     }
                     else
