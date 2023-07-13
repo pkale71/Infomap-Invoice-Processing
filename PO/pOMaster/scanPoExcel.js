@@ -52,6 +52,16 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             }
             req.body = fields
             //  console.log(file)
+            if(path.extname(file.vendorFile.originalFilename) != '.xlsx')
+            {
+              res.status(400)
+              return res.json({
+                  "status_code" : 400,
+                  "message" : "File Type Not Matched",
+                  "status_name" : getCode.getStatus(400),
+                  // "data"     :    fs.readFileSync(file.excel.filepath, 'base64')
+              }) 
+            }
             filepath = fileObject.poFile.filepath
             mimeType = fileObject.poFile.mimetype
             filename = fileObject.poFile.originalFilename
@@ -59,7 +69,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             const file1 = reader.readFile(fileObject.poFile.filepath)
             let data = []
           
-            const worksheet = file1.Sheets['Sheet1']
+            // const worksheet = file1.Sheets['Sheet1']
+            const worksheet = file1.Sheets[file1.SheetNames[0]]
             
             // const range = reader.utils.decode_range(worksheet['!ref']);
             // const column = reader.utils.decode_col("VENDOR NUMBER");
@@ -106,7 +117,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             amount = 0
             authData = await commondb.selectToken(accessToken)
 
-            const pos = reader.utils.sheet_to_json(file1.Sheets['Sheet1'])
+            // const pos = reader.utils.sheet_to_json(file1.Sheets['Sheet1'])
+            const pos = reader.utils.sheet_to_json(file1.Sheets[file1.SheetNames[0]])
             // for(let i = 0; i < pos.length;)
             // {
             //   pos[i]['msg'] = ''

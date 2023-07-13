@@ -26,16 +26,27 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 fileObject = file
             }
             req.body = fields
-            
+            console.log(path.extname(file.vendorFile.originalFilename))
+            if(path.extname(file.vendorFile.originalFilename) != '.xlsx')
+            {
+              res.status(400)
+              return res.json({
+                  "status_code" : 400,
+                  "message" : "File Type Not Matched",
+                  "status_name" : getCode.getStatus(400),
+                  // "data"     :    fs.readFileSync(file.excel.filepath, 'base64')
+              }) 
+            }
             const file1 = reader.readFile(fileObject.vendorFile.filepath)
             let data = []
           
-            const worksheet = file1.Sheets['Sheet1']
+            // const worksheet = file1.Sheets['Sheet1']
+            const worksheet = file1.Sheets[file1.SheetNames[0]]
             
             // const range = reader.utils.decode_range(worksheet['!ref']);
             // const column = reader.utils.decode_col("VENDOR NUMBER");
             const jsonWorksheet = reader.utils.sheet_to_json(worksheet, { header: 1 });
-          //  console.log(jsonWorksheet)
+            // console.log(file1.SheetNames)
 
             // Get the last cell index of row one
             const lastCellIndex = jsonWorksheet[0]?.length ;
@@ -72,7 +83,8 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             let values = []
             let vendorsList = []
 
-            const vendors = reader.utils.sheet_to_json(file1.Sheets['Sheet1'])
+            // const vendors = reader.utils.sheet_to_json(file1.Sheets['Sheet1'])
+            const vendors = reader.utils.sheet_to_json(file1.Sheets[file1.SheetNames[0]])
             // let dupList =  findDuplicatesInColumn(vendors);
             // return res.json({data : dupList})
             vendors.forEach(ele => {
