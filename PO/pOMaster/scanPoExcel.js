@@ -52,7 +52,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             }
             req.body = fields
             //  console.log(file)
-            if(path.extname(file.vendorFile.originalFilename) != '.xlsx')
+            if(path.extname(file.poFile.originalFilename) != '.xlsx')
             {
               res.status(400)
               return res.json({
