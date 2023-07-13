@@ -38,11 +38,11 @@ module.exports = require('express').Router().post('/',async(req,res) =>
           //  console.log(jsonWorksheet)
 
             // Get the last cell index of row one
-            const lastCellIndex = jsonWorksheet[0].length ;
+            const lastCellIndex = jsonWorksheet[0]?.length ;
             let headerFlag = 0
             let columnIndex = []
             headers.forEach(ele => {
-                if(jsonWorksheet[0].includes(ele))
+                if(jsonWorksheet[0]?.includes(ele))
                 {
                     columnIndex.push({column : ele , index : jsonWorksheet[0].indexOf(ele)})
                 }
@@ -50,7 +50,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 {
                     return
                 }
-                if(!jsonWorksheet[0].includes(ele))
+                if(!jsonWorksheet[0]?.includes(ele))
                 {
                     console.log(ele)
                     headerFlag = 1
@@ -63,7 +63,10 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                     }) 
                 }
             })
-
+            if(headerFlag == 1)
+            {
+                return
+            }
             let accepted = []
             let rejected = []
             let values = []

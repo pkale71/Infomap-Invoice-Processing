@@ -180,8 +180,7 @@ db.verifyInvoiceDetails = (id) =>
             (gst_master_id IS NULL OR gst_master_id = 0) OR 
             (base_amount IS NULL OR base_amount = 0) OR (discount IS NULL OR discount < 0) OR 
             (tds_master_id IS NULL OR tds_master_id = 0) OR (gst_rate IS NULL OR gst_rate = 0) OR 
-            (cgst_amount IS NULL  OR cgst_amount  = 0) OR (sgst_amount IS NULL OR sgst_amount = 0) OR
-            (igst_amount IS NULL  OR igst_amount  = 0) OR (gross_amount IS NULL OR gross_amount = 0) OR
+            (gross_amount IS NULL OR gross_amount = 0) OR
             (tds_rate IS NULL OR tds_rate = 0) OR (with_tax_amount IS NULL OR with_tax_amount = 0) OR
             (invoice_payable_amount IS NULL OR invoice_payable_amount = 0) 
             AND invoice_id = ${id}`

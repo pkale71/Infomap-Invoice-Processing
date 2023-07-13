@@ -51,7 +51,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
               }) 
             }
             req.body = fields
-            // console.log(file)
+            //  console.log(file)
             filepath = fileObject.poFile.filepath
             mimeType = fileObject.poFile.mimetype
             filename = fileObject.poFile.originalFilename
@@ -64,14 +64,15 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             // const range = reader.utils.decode_range(worksheet['!ref']);
             // const column = reader.utils.decode_col("VENDOR NUMBER");
             const jsonWorksheet = reader.utils.sheet_to_json(worksheet, { header: 1 });
-          //  console.log(jsonWorksheet)
+            // console.log(file1.SheetNames[0])
 
             // Get the last cell index of row one
-            const lastCellIndex = jsonWorksheet[0].length ;
+            console.log(jsonWorksheet)
+            const lastCellIndex = jsonWorksheet[0]?.length ;
             let headerFlag = 0
             let columnIndex = []
             headers.forEach(ele => {
-                if(jsonWorksheet[0].includes(ele))
+                if(jsonWorksheet[0]?.includes(ele))
                 {
                     columnIndex.push({column : ele , index : jsonWorksheet[0].indexOf(ele)})
                 }
@@ -79,19 +80,23 @@ module.exports = require('express').Router().post('/',async(req,res) =>
                 {
                     return
                 }
-                if(!jsonWorksheet[0].includes(ele))
+                if(!jsonWorksheet[0]?.includes(ele))
                 {
                     // console.log(ele)
                     headerFlag = 1
                     res.status(400)
                     return res.json({
                         "status_code" : 400,
-                        "message" : "PO scanning process not completed. Required format not matched",
+                        "message" : "Required format not matched",
                         "status_name" : getCode.getStatus(400),
                        // "data"     :    fs.readFileSync(file.excel.filepath, 'base64')
                     }) 
                 }
             })
+            if(headerFlag == 1)
+            {
+                return
+            }
             const remarkAddress = reader.utils.encode_cell({ r: 0, c: lastCellIndex});
             reader.utils.sheet_add_aoa(worksheet, [['REMARKS']], { origin: remarkAddress });
           
@@ -937,7 +942,7 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
     console.log(new Date())
     if(fileReturn == 1)
     {
-      //reader.writeFile(file1, './'+filename) 
+      reader.writeFile(file1, './'+filename) 
       let xlsxFile = fs.readFileSync('./'+filename, 'base64')
       xlsxFile = `data:${mimeType};base64,` + xlsxFile
       res.status(200)

@@ -33,7 +33,8 @@ db.updateInvoiceDetail = (ele) =>
     {
         try
         {
-            let sql = `UPDATE invoice_detail SET tds_rate = '${ele.tdsRate}', with_tax_amount = '${ele.withTaxAmount}', invoice_payable_amount = '${ele.invoicePayableAmount}', tds_master_id = (SELECT id FROM tds_master WHERE uuid = '${ele.tdsMaster?.uuid}')`
+            let sql = `UPDATE invoice_detail SET tds_rate = '${ele.tdsRate}', with_tax_amount = '${ele.withTaxAmount}', invoice_payable_amount = '${ele.invoicePayableAmount}', tds_master_id = (SELECT id FROM tds_master WHERE uuid = '${ele.tdsMaster?.uuid}') 
+            WHERE uuid = '${ele.uuid}'`
 
             pool.query(sql, (error, result) => 
             {
