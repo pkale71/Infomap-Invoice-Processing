@@ -78,7 +78,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
             // console.log(file1.SheetNames[0])
 
             // Get the last cell index of row one
-            console.log(jsonWorksheet)
+            // console.log(jsonWorksheet)
             const lastCellIndex = jsonWorksheet[0]?.length ;
             let headerFlag = 0
             let columnIndex = []
