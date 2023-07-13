@@ -155,12 +155,15 @@ uniqueFunction.isProcessedInvoice = (id) =>
                     }
                     else
                     {
+                console.log("1")
+
                         return resolve(0)
                     }
                 })
             }
             else
             {
+                console.log("2")
                 return resolve(0)
             }
            })

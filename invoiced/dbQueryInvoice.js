@@ -476,7 +476,7 @@ db.updateInvoiceMasterProcessed = (uuid, paymentTerms, postingDate, baselineDate
     {
         try
         {
-            let sql = `UPDATE invoice_master SET payment_terms = '${paymentTerms}', posting_date = '${postingDate}', base_line_date = '${baselineDate}', currency = '${currency}', document_header_text = '${documentHeaderText}', with_tax_amount = '${withTaxAmount}', gross_payable_amount = '${grossPayableAmount} 
+            let sql = `UPDATE invoice_master SET payment_terms = '${paymentTerms}', posting_date = '${postingDate}', base_line_date = '${baselineDate}', currency = '${currency}', document_header_text = '${documentHeaderText}', with_tax_amount = '${withTaxAmount}', gross_payable_amount = '${grossPayableAmount}'
             WHERE uuid = '${uuid}'`
             pool.query(sql, (error, result) => 
             {

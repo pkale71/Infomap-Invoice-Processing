@@ -106,6 +106,7 @@ function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, po
         else
         {
             uniqueFunction.isProcessedInvoice(invoiceId).then(verify => {
+                console.log(verify)
                 if(verify)
                 {
                     db.invoiceStatusUpdate(invoiceId, new Date(), userId).then(invoice => {
@@ -134,7 +135,7 @@ function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, po
                     res.status(200)
                     return res.json({
                         "status_code" : 200,
-                        "message"     : "success",
+                        "message"     : "Invoice Updated Successfully, But Not Processed",
                         "status_name" : getCode.getStatus(200)
                     });
                 }

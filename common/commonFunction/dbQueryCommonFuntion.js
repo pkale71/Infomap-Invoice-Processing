@@ -148,7 +148,7 @@ db.verifyInvoiceMaster = (id) =>
             (document_header_text IS NULL OR document_header_text = '') OR (with_tax_amount IS NULL OR with_tax_amount = 0) OR
             (invoice_status_id IS NULL OR invoice_status_id = 0) OR (created_on IS NULL OR created_on = 0) OR
             (created_by_id IS NULL OR created_by_id = 0) OR (verified_by_id IS NULL OR verified_by_id = 0) OR
-            (verified_on IS NULL OR verified_on = 0) OR OR (gross_payable_amount IS NULL OR gross_payable_amount = 0)
+            (verified_on IS NULL OR verified_on = 0) OR (gross_payable_amount IS NULL OR gross_payable_amount = 0) OR
             (is_active IS NULL  OR is_active  = 0))
             AND id = ${id}`
             pool.query(sql, (error, result) => 
