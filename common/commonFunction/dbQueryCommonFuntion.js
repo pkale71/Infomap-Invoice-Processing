@@ -140,8 +140,8 @@ db.verifyInvoiceMaster = (id) =>
             let sql = `SELECT COUNT(barcode) AS invoiceExist FROM invoice_master 
             WHERE ((barcode IS NULL OR (barcode = '')) OR
             (vendor_id IS NULL OR vendor_id = 0) OR 
-            (invoice_number IS NULL OR invoice_number = 0) OR (invoice_date IS NULL OR invoice_date = 0) OR 
-            (base_amount IS NULL OR base_amount = 0) OR (discount IS NULL OR discount = 0) OR
+            (invoice_number IS NULL OR invoice_number = '') OR (invoice_date IS NULL OR invoice_date = 0) OR 
+            (base_amount IS NULL OR base_amount = 0) OR (discount IS NULL OR discount < 0) OR
             (gst_amount IS NULL OR gst_amount = 0) OR (net_amount IS NULL OR net_amount = 0) OR
             (payment_terms IS NULL OR payment_terms = 0) OR (posting_date IS NULL OR posting_date = 0) OR
             (base_line_date IS NULL OR base_line_date = 0) OR (currency IS NULL OR currency = '') OR
@@ -178,7 +178,7 @@ db.verifyInvoiceDetails = (id) =>
             (po_master_id IS NULL OR po_master_id = 0) OR
             (po_detail_id IS NULL OR po_detail_id = 0) OR
             (gst_master_id IS NULL OR gst_master_id = 0) OR 
-            (base_amount IS NULL OR base_amount = 0) OR (discount IS NULL OR discount = 0) OR 
+            (base_amount IS NULL OR base_amount = 0) OR (discount IS NULL OR discount < 0) OR 
             (tds_master_id IS NULL OR tds_master_id = 0) OR (gst_rate IS NULL OR gst_rate = 0) OR 
             (cgst_amount IS NULL  OR cgst_amount  = 0) OR (sgst_amount IS NULL OR sgst_amount = 0) OR
             (igst_amount IS NULL  OR igst_amount  = 0) OR (gross_amount IS NULL OR gross_amount = 0) OR
