@@ -59,21 +59,21 @@ class invoice {
                     "activityText"          :   data.activity_text,
                     "monthPeriod"          :   uniqueFunction.changeDateToSqlDate(data.month_period),
                     "hsnSac"           :   data.hsn_sac,
-                    "glAccount"   :   {
-                                                "uuid" : data.glAccountUuid,
-                                                "accountNumber" : data.glAccountNumber,
-                                                "ledgerDescription" : data.ledger_description
-                                            },
-                    "tdsMaster"   :   {
-                        "uuid" : data.tdsMasterUuid,
-                        "description" : data.tdsMasterDescription,
-                        "rate" : data.tdsMasterRate,
-                        "taxSection" : data.tdsMasterTaxSection
-                                            },
-                    "tdsRate" : data.tds_rate,
-                    "withTaxAmount" : data.invoiceWithTaxAmount,
-                    "invoicePayableAmount" : data.invoice_payable_amount
-                }
+                    "glAccount"   : {
+                                        "uuid" : data.glAccountUuid,
+                                        "accountNumber" : data.glAccountNumber,
+                                        "ledgerDescription" : data.ledger_description
+                                    }                    
+                },
+                "tdsMaster"   :   {
+                    "uuid" : data.tdsMasterUuid,
+                    "description" : data.tdsMasterDescription,
+                    "rate" : data.tdsMasterRate,
+                    "taxSection" : data.tdsMasterTaxSection
+                },
+                "tdsRate" : data.tds_rate,
+                "withTaxAmount" : data.invoiceWithTaxAmount,
+                "invoicePayableAmount" : data.invoice_payable_amount
             }
     }
 
