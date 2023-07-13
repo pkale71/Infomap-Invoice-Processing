@@ -304,7 +304,7 @@ db.getInvoices = (vendorUuid) =>
         try
         {
             let sql = `SELECT  v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
-            im.uuid, im.barcode, im.base_amount, im.invoice_number, DATE_FORMAT(im.invoice_date, '%m-%d-%Y') AS invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active,
+            im.uuid, im.barcode, im.base_amount, im.invoice_number, DATE_FORMAT(im.invoice_date, '%m-%d-%Y') AS invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active, im.gross_payable_amount, 
             s.id AS invoiceStatusId, s.name AS invoiceStatusName, 
             (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
              im.created_on,  
@@ -351,7 +351,7 @@ db.getInvoice = (invoiceUuid) =>
         {
             //convert_tz(im.processed_on,'+00:00','+05:30') AS 
             let sql = `SELECT  v.uuid AS vendorUuid, v.code AS vendorCode, v.name AS vendorName,
-            im.uuid, im.barcode, im.base_amount, im.invoice_number,DATE_FORMAT(im.invoice_date, '%m-%d-%Y') AS invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active,
+            im.uuid, im.barcode, im.base_amount, im.invoice_number,DATE_FORMAT(im.invoice_date, '%m-%d-%Y') AS invoice_date, im.discount, im.gst_amount, im.net_amount, im.is_active, im.gross_payable_amount,
             s.id AS invoiceStatusId, s.name AS invoiceStatusName, 
             (SELECT COUNT(id) FROM invoice_detail WHERE invoice_id = im.id) AS totalItems,
             im.created_on,  
@@ -476,7 +476,7 @@ db.updateInvoiceMasterProcessed = (uuid, paymentTerms, postingDate, baselineDate
     {
         try
         {
-            let sql = `UPDATE invoice_master SET payment_terms = '${paymentTerms}', posting_date = '${postingDate}', base_line_date = '${baselineDate}', currency = '${currency}', document_header_text = '${documentHeaderText}', with_tax_amount = '${withTaxAmount}'
+            let sql = `UPDATE invoice_master SET payment_terms = '${paymentTerms}', posting_date = '${postingDate}', base_line_date = '${baselineDate}', currency = '${currency}', document_header_text = '${documentHeaderText}', with_tax_amount = '${withTaxAmount}', gross_payable_amount = '${grossPayableAmount} 
             WHERE uuid = '${uuid}'`
             pool.query(sql, (error, result) => 
             {

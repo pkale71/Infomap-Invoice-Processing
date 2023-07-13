@@ -2,22 +2,19 @@ let db = require('./dbQueryInvoice')
 let uniqueFunction = require('../common/commonFunction/uniqueSearchFunction')
 let commondb = require('../common/commonFunction/dbQueryCommonFuntion')
 let errorCode = require('../common/errorCode/errorCode')
-let getCode = new errorCode()
-let createUuid = require('uuid')
+let getCode = new errorCode();
 let uuid;
 let accessToken;
 let paymentTerms;
 let postingDate;
 let baselineDate;
-let invoiceDate;
 let currency;
 let documentHeaderText;
 let withTaxAmount;
+let grossPayableAmount;
 let invoiceDetails = [];
-let poMasterId;
 let userId;
 let detail = 0
-let poDetailIds = ""
 let totalItems = 0
 module.exports = require('express').Router().post('/',async(req,res) => 
 {
@@ -26,7 +23,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         invoiceDetails = []
         detail = 0
         totalItems = 0
-        if(!req.body.uuid || !req.body.paymentTerms || !req.body.postingDate || !req.body.baselineDate || !req.body.currency || !req.body.documentHeaderText || !req.body.withTaxAmount || req.body.invoiceDetails?.length == 0)
+        if(!req.body.uuid || !req.body.paymentTerms || !req.body.postingDate || !req.body.baselineDate || !req.body.currency || !req.body.documentHeaderText || !req.body.withTaxAmount || !req.body.grossPayableAmount || req.body.invoiceDetails?.length == 0)
         {
             res.status(400)
             return res.json({
@@ -42,6 +39,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         currency = req.body.currency
         documentHeaderText = req.body.documentHeaderText
         withTaxAmount = req.body.withTaxAmount
+        grossPayableAmount = req.body.grossPayableAmount
         invoiceDetails = req.body.invoiceDetails
         accessToken = req.body.accessToken;
         authData = await commondb.selectToken(accessToken)
@@ -61,7 +59,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
         if(status[0].name != 'Processed')
         {
             invoiceId = status[0].id
-            updateInvoiceMasters(invoiceDetails, 0, 0, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId)
+            updateInvoiceMasters(invoiceDetails, 0, 0, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId, grossPayableAmount)
         }
         else
         {
@@ -86,7 +84,7 @@ module.exports = require('express').Router().post('/',async(req,res) =>
     }
 })
 
-function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId)
+function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId,grossPayableAmount)
 {
     try
     {
@@ -101,7 +99,7 @@ function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, po
                         totalItems++
                     }            
                     start++
-                    updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId)
+                    updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId, grossPayableAmount)
                 }
             })
         }
@@ -149,14 +147,14 @@ function updateInvoiceDetails(invoiceDetails, start, end, uuid, paymentTerms, po
     }
 }
 
-function updateInvoiceMasters(invoiceDetails, start, end, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId)
+function updateInvoiceMasters(invoiceDetails, start, end, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId, grossPayableAmount)
 {
-    db.updateInvoiceMasterProcessed(uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount).then(updateInvoiceMasterProcessed => {
+    db.updateInvoiceMasterProcessed(uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, grossPayableAmount).then(updateInvoiceMasterProcessed => {
     if(updateInvoiceMasterProcessed)
     {
         if(updateInvoiceMasterProcessed.affectedRows > 0)
         {
-            updateInvoiceDetails(invoiceDetails, 0, invoiceDetails.length, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId)
+            updateInvoiceDetails(invoiceDetails, 0, invoiceDetails.length, uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, totalItems, userId, res, detail, invoiceId, grossPayableAmount)
         }
         else
         {

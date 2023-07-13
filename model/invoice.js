@@ -25,6 +25,7 @@ class invoice {
     currency
     documentHeaderText
     withTaxAmount
+    grossPayableAmount
 
     constructor(){}
 
@@ -123,7 +124,8 @@ class invoice {
         this.baseLineDate        =   uniqueFunction.changeDateToSqlDate(data.base_line_date),
         this.currency            =   data.currency,
         this.documentHeaderText  =   data.document_header_text,
-        this.withTaxAmount      =   data.with_tax_amount
+        this.withTaxAmount      =   data.with_tax_amount,
+        this.grossPayableAmount =   data.gross_payable_amount
     }
 
     getDataAll()
@@ -153,7 +155,8 @@ class invoice {
             baselineDate : this.baseLineDate,
             currency : this.currency,
             documentHeaderText : this.documentHeaderText,
-            withTaxAmount : this.withTaxAmount
+            withTaxAmount : this.withTaxAmount,
+            grossPayableAmount : this.grossPayableAmount
         }
     }
 }
