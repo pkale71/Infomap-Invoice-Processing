@@ -470,7 +470,7 @@ db.updateInvoiceMaster = (uuid,vendorUuid, barCode, invoiceNumber, invoiceDate, 
     })
 }
 
-db.updateInvoiceMasterProcessed = (uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount) => 
+db.updateInvoiceMasterProcessed = (uuid, paymentTerms, postingDate, baselineDate, currency, documentHeaderText, withTaxAmount, grossPayableAmount) => 
 {
     return new Promise((resolve, reject) => 
     {
