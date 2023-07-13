@@ -961,10 +961,11 @@ function scanPOExcel(pos,posList,fileReturn,headers,reader,worksheet, start, end
       return res.json({
         "status_code" : 200,
         "message"     : "success",
-        "data"      : {"poFile" : xlsxFile,
-        "savedPos"  : savedPos? savedPos : 0,
-        "totalPos"  : totalPos? totalPos : 0,
-        },
+        "data"      : {
+                        "poFile" : xlsxFile,
+                        "savedPos"  : savedPos? savedPos : 0,
+                        "totalPos"  : totalPos? totalPos : 0,
+                      },
         "status_name" : getCode.getStatus(200)
     });
     }
